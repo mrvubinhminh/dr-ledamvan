@@ -154,7 +154,7 @@
         .split-layout .right-image { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vh; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
         
         .image-caption-container { display: flex; flex-direction: column; align-items: center; width: fit-content; max-width: 100%; max-height: 100%; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
-        .image-caption-container img { width: auto; max-width: 100%; max-height: 50vh; object-fit: contain; border-radius: 10px; border: 3px solid var(--primary-border); box-shadow: 0 8px 20px rgba(0,0,0,0.15); background: var(--bg-card); transition: all 0.5s ease; }
+        .image-caption-container img { width: auto; max-width: 100%; max-height: 50vh; object-fit: contain; border-radius: 10px; border: 3px solid var(--primary-border); box-shadow: 0 8px 20px rgba(0,0,0,0.15); background: var(--bg-card); transition: border-color 0.5s ease, background 0.5s ease; }
         .dual-image-container .image-caption-container img { max-height: 25vh; }
         .image-caption { width: 100%; max-width: 100%; text-align: center; font-size: 2.6vh; color: var(--text-muted); margin-top: 1.5vh; font-style: italic; line-height: 1.4; word-wrap: break-word; transition: all 0.5s ease;}
 
@@ -373,25 +373,54 @@
                 </div>
             </div>
 
+            <!-- CẬP NHẬT ẢNH CHO CÁC SLIDE MỤC TIÊU VÀ ĐẠI CƯƠNG -->
             <div class="slide">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-book-medical"></i> Mục tiêu - Kiến thức</h2></div>
-                <div class="slide-content"><ul><li>Hiểu sinh lý cổ tử cung.</li><li>Nắm biến đổi tế bào học.</li><li>Nhận diện khó khăn khi soi.</li><li>Phân biệt sinh lý và bệnh.</li><li>Nắm phác đồ theo dõi bệnh.</li></ul></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Hiểu sinh lý cổ tử cung.</li><li>Nắm biến đổi tế bào học.</li><li>Nhận diện khó khăn khi soi.</li><li>Phân biệt sinh lý và bệnh.</li><li>Nắm phác đồ theo dõi bệnh.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/27W8rNK2/0554802b18b6.png" alt="Mục tiêu kiến thức">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="slide">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-microscope"></i> Mục tiêu - Kỹ năng</h2></div>
-                <div class="slide-content"><ul><li>Bộc lộ rõ cổ tử cung.</li><li>Lấy sạch chất nhầy an toàn.</li><li>Bấm sinh thiết cầm máu tốt.</li><li>Không nạo kênh cổ tử cung.</li><li>Xử trí đúng tình huống cấp.</li></ul></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Bộc lộ rõ cổ tử cung.</li><li>Lấy sạch chất nhầy an toàn.</li><li>Bấm sinh thiết cầm máu tốt.</li><li>Không nạo kênh cổ tử cung.</li><li>Xử trí đúng tình huống cấp.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/cc6yhHSz/ea82a8f75699.png" alt="Mục tiêu kỹ năng">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="slide">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-hands-holding-child"></i> Mục tiêu - Thái độ</h2></div>
-                <div class="slide-content"><ul><li>Trấn an tâm lý thai phụ.</li><li>Thao tác nhẹ nhàng, cẩn thận.</li><li>Tôn trọng người bệnh tuyệt đối.</li><li>Đảm bảo an toàn thai nhi.</li><li>Tuân thủ quy trình vô khuẩn.</li></ul></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Trấn an tâm lý thai phụ.</li><li>Thao tác nhẹ nhàng, cẩn thận.</li><li>Tôn trọng người bệnh tuyệt đối.</li><li>Đảm bảo an toàn thai nhi.</li><li>Tuân thủ quy trình vô khuẩn.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/F4y10pmS/e1ef54f1c01c.png" alt="Mục tiêu thái độ">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- PHẦN 2: NỘI DUNG -->
             <div class="slide" data-notes="Theo các em, thai kỳ có làm ung thư cổ tử cung tiến triển nhanh hơn không? [Chờ 2 giây]. Câu trả lời là KHÔNG. Thai kỳ không làm bệnh nặng thêm!">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-clipboard-list"></i> Đại cương soi cổ tử cung trong thai kỳ</h2></div>
-                <div class="slide-content"><ul><li>Bệnh không tăng khi có thai.</li><li>Thai phụ thường rất lo lắng.</li><li>Mục đích: loại trừ ung thư.</li><li>Tránh can thiệp điều trị sai.</li><li>Tránh nguy cơ sinh non, sẩy.</li></ul></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Bệnh không tăng khi có thai.</li><li>Thai phụ thường rất lo lắng.</li><li>Mục đích: loại trừ ung thư.</li><li>Tránh can thiệp điều trị sai.</li><li>Tránh nguy cơ sinh non, sẩy.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/CpVXzQt5/f0cf7b6ee473.png" alt="Đại cương soi thai kỳ">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="slide">
@@ -769,7 +798,7 @@
             <!-- MÀN HÌNH CẢM ƠN -->
             <div class="slide thank-you-slide" data-notes="Bài giảng của chúng ta hôm nay đến đây là kết thúc. Cảm ơn các em đã tích cực tham gia tương tác. Chúc các em sẽ luôn tự tin và vững vàng khi thực hành lâm sàng!">
                 <div class="thank-you-content">
-                    <h1 class="thank-you-title">CẢM ƠN CÁC BẠN ĐÃ THEO DÕI BÀI HỌC!</h1>
+                    <h1 class="thank-you-title">CẢM ƠN CÁC EM ĐÃ THEO DÕI BÀI HỌC!</h1>
                     <div class="sunflower-container">
                         <span class="sunflower">🌻</span>
                         <span class="sunflower delay-1">🌻</span>
@@ -1217,3 +1246,4 @@
     </script>
 </body>
 </html>
+```
