@@ -71,7 +71,7 @@
             cursor: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" fill="%2300ff00"/><circle cx="12" cy="12" r="7" fill="none" stroke="%2300ff00" stroke-width="2" opacity="0.6"/></svg>') 12 12, auto !important;
         }
         
-        button, .theme-dot, .quiz-btn, .fullscreen-btn, .download-btn, .notes-btn, .toggle-image-btn {
+        button, .theme-dot, .quiz-btn, .fullscreen-btn, .download-btn, .notes-btn, .toggle-image-btn, .step-toggle-btn {
             cursor: pointer !important;
         }
 
@@ -156,7 +156,7 @@
         .image-caption-container { display: flex; flex-direction: column; align-items: center; width: fit-content; max-width: 100%; max-height: 100%; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
         .image-caption-container img { width: auto; max-width: 100%; max-height: 50vh; object-fit: contain; border-radius: 10px; border: 3px solid var(--primary-border); box-shadow: 0 8px 20px rgba(0,0,0,0.15); background: var(--bg-card); transition: border-color 0.5s ease, background 0.5s ease; }
         .dual-image-container .image-caption-container img { max-height: 25vh; }
-        .image-caption { width: 100%; max-width: 100%; text-align: center; font-size: 2.6vh; color: var(--text-muted); margin-top: 1.5vh; font-style: italic; line-height: 1.4; word-wrap: break-word; transition: all 0.5s ease;}
+        .image-caption { width: 100%; max-width: 100%; text-align: center; font-size: 2.6vh; color: var(--text-muted); margin-top: 1.5vh; font-style: italic; line-height: 1.4; word-wrap: break-word; transition: color 0.5s ease;}
 
         /* TRẠNG THÁI PHÓNG TO ẢNH (3/4 MÀN HÌNH CHUNG) */
         .split-layout.image-expanded .left-content,
@@ -355,7 +355,7 @@
                 <div class="author-info">
                     <strong><i class="fa-solid fa-chalkboard-user"></i> Trình bày:</strong><br>
                     <i class="fa-solid fa-user-doctor"></i> BS. Lê Đàm Vân<br>
-                    <i class="fa-solid fa-hospital"></i> BV Từ Dũ
+                    <i class="fa-solid fa-hospital"></i> Chuyên khoa 2, BV Từ Dũ
                 </div>
             </div>
 
@@ -381,6 +381,7 @@
                     <div class="right-image">
                         <div class="image-caption-container">
                             <img src="https://i.ibb.co/27W8rNK2/0554802b18b6.png" alt="Mục tiêu kiến thức">
+                            <div class="image-caption">Hình ảnh minh họa kiến thức soi cổ tử cung</div>
                         </div>
                     </div>
                 </div>
@@ -393,6 +394,7 @@
                     <div class="right-image">
                         <div class="image-caption-container">
                             <img src="https://i.ibb.co/cc6yhHSz/ea82a8f75699.png" alt="Mục tiêu kỹ năng">
+                            <div class="image-caption">Thao tác kỹ năng lâm sàng chuyên nghiệp</div>
                         </div>
                     </div>
                 </div>
@@ -405,6 +407,7 @@
                     <div class="right-image">
                         <div class="image-caption-container">
                             <img src="https://i.ibb.co/F4y10pmS/e1ef54f1c01c.png" alt="Mục tiêu thái độ">
+                            <div class="image-caption">Trấn an, ân cần với thai phụ khi thăm khám</div>
                         </div>
                     </div>
                 </div>
@@ -418,6 +421,7 @@
                     <div class="right-image">
                         <div class="image-caption-container">
                             <img src="https://i.ibb.co/CpVXzQt5/f0cf7b6ee473.png" alt="Đại cương soi thai kỳ">
+                            <div class="image-caption">Mục tiêu là loại trừ ung thư và bảo vệ an toàn thai kỳ</div>
                         </div>
                     </div>
                 </div>
@@ -465,19 +469,29 @@
                 </div>
             </div>
 
+            <!-- CẬP NHẬT: Slide Khó khăn khi soi chuyển sang có ảnh -->
             <div class="slide" data-notes="Khám phụ khoa cho bà bầu rất khó. Đặt cái mỏ vịt vào là thành âm đạo sa xuống che kín hết. Cổ tử cung thì chạm nhẹ là chảy máu. Vậy ta phải làm sao?">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Khó khăn khi soi</h2></div>
-                <div class="slide-content"><ul><li>Thành âm đạo sa che khuất.</li><li>Chất nhầy đặc dính khó lau.</li><li>Cổ tử cung rất dễ chảy máu.</li><li>Chuyển sản non tạo vết trắng.</li><li>Phản ứng màng rụng giống K.</li></ul></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Thành âm đạo sa che khuất.</li><li>Chất nhầy đặc dính khó lau.</li><li>Cổ tử cung rất dễ chảy máu.</li><li>Chuyển sản non tạo vết trắng.</li><li>Phản ứng màng rụng giống K.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/v6n8WJjC/5fa15d58607d.jpg" alt="Khó khăn khi soi">
+                            <div class="image-caption">Hình ảnh minh họa khó khăn khi soi cổ tử cung thai kỳ.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <!-- CẬP NHẬT: Thay link ảnh Slide Kỹ thuật soi chuẩn -->
             <div class="slide">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-kit-medical"></i> Kỹ thuật soi chuẩn</h2></div>
                 <div class="split-layout">
                     <div class="left-content"><ul><li>Dùng mỏ vịt kích cỡ lớn.</li><li>Thao tác phải cực kỳ nhẹ.</li><li>Dùng acid acetic loại chất nhầy.</li><li>Dùng tăm bông chùi rất nhẹ.</li><li>Tránh làm chảy máu tổn thương.</li></ul></div>
                     <div class="right-image">
                         <div class="image-caption-container">
-                            <img src="https://i.ibb.co/n8QpMf0x/c7cda7e85a8d.png" alt="Mỏ vịt">
-                            <div class="image-caption">Mỏ vịt âm đạo.</div>
+                            <img src="https://i.ibb.co/k6mbTzQz/0ef359cf5a7c.jpg" alt="Kỹ thuật soi chuẩn">
+                            <div class="image-caption">Kỹ thuật soi chuẩn xác và thao tác nhẹ nhàng.</div>
                         </div>
                     </div>
                 </div>
@@ -1246,4 +1260,3 @@
     </script>
 </body>
 </html>
-```
