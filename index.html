@@ -815,6 +815,15 @@
     </div>
 
     <script>
+        // --- TẢI TRƯỚC HÌNH ẢNH (PRELOAD) KHẮC PHỤC ĐỘ TRỄ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                const preloader = new Image();
+                preloader.src = img.src;
+            });
+        });
+
         // Cài đặt ngày tháng năm động
         function setFooterDate() {
             const today = new Date();
@@ -1181,4 +1190,3 @@
     </script>
 </body>
 </html>
-```
