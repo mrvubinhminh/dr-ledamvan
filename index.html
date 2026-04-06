@@ -298,7 +298,7 @@
         .notes-panel { position: absolute; bottom: 90px; right: 3.5vh; width: 450px; background: var(--bg-card); color: var(--text-main); border-top: 5px solid #f59e0b; padding: 25px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); font-size: 2.5vh; line-height: 1.6; z-index: 100; display: none; backdrop-filter: blur(10px); transition: all 0.5s ease;}
         
         /* Cập nhật Các Nút Công Cụ góc trên (Nhỏ lại, trong suốt) */
-        .fullscreen-btn, .download-btn, .toggle-image-btn { 
+        .fullscreen-btn, .download-btn, .step-toggle-btn, .toggle-image-btn { 
             position: absolute; top: 20px; 
             background: rgba(156, 163, 175, 0.15); /* Mờ trong suốt */
             color: var(--text-main); 
@@ -307,15 +307,16 @@
             border-radius: 10px; display: flex; justify-content: center; align-items: center; 
             z-index: 100; transition: all 0.2s; backdrop-filter: blur(5px); 
         }
-        .fullscreen-btn i, .download-btn i, .toggle-image-btn i { font-size: 15px !important; }
+        .fullscreen-btn i, .download-btn i, .step-toggle-btn i, .toggle-image-btn i { font-size: 15px !important; }
         .btn-num { font-weight: bold; margin-right: 4px; font-family: sans-serif; font-size: 14px; }
         
         .fullscreen-btn { right: 20px; }
         .download-btn { right: 66px; }
-        .toggle-image-btn-1 { right: 112px; display: none; }
-        .toggle-image-btn-2 { right: 158px; display: none; }
+        .step-toggle-btn { right: 112px; }
+        .toggle-image-btn-1 { right: 158px; display: none; }
+        .toggle-image-btn-2 { right: 204px; display: none; }
         
-        .download-btn:hover, .fullscreen-btn:hover, .toggle-image-btn:hover { background: var(--accent); border-color: var(--accent); color: white; transform: scale(1.08); }
+        .download-btn:hover, .fullscreen-btn:hover, .step-toggle-btn:hover, .toggle-image-btn:hover { background: var(--accent); border-color: var(--accent); color: white; transform: scale(1.08); }
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
 
@@ -330,7 +331,7 @@
             ul li, ul li.visible { opacity: 1 !important; transform: none !important; }
             .slide-title-main h2 { -webkit-text-fill-color: var(--accent) !important; background: none !important; }
             .slide-title-main .author-info, .slide-title i, .warning-slide { box-shadow: none !important; border: 2px solid var(--primary-border); }
-            .controls, .notes-btn, .fullscreen-btn, .download-btn, .toggle-image-btn, .progress-bar-container, .notes-panel, #balloon-container, .theme-selector { display: none !important; }
+            .controls, .notes-btn, .fullscreen-btn, .download-btn, .step-toggle-btn, .toggle-image-btn, .progress-bar-container, .notes-panel, #balloon-container, .theme-selector { display: none !important; }
             .slide-footer { display: none !important; }
             
             .quiz-card { border: 2px solid var(--primary-border); box-shadow: none; padding: 2vh; }
@@ -803,6 +804,7 @@
             <!-- Nút Công cụ nổi (Thu nhỏ & Trong suốt) -->
             <button id="btn-toggle-image-2" class="toggle-image-btn toggle-image-btn-2" title="Phóng to/Thu nhỏ ảnh 2 (Phím 2)"><span class="btn-num">2</span><i class="fa-solid fa-magnifying-glass-plus"></i></button>
             <button id="btn-toggle-image-1" class="toggle-image-btn toggle-image-btn-1" title="Phóng to/Thu nhỏ ảnh 1 (Phím 1)"><span class="btn-num" id="span-num-1">1</span><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button id="btn-toggle-steps" class="step-toggle-btn" title="Đang bật: Hiện từng dòng"><i class="fa-solid fa-bars-staggered"></i></button>
             <button id="btn-download" class="download-btn" title="Tải Slide thành Ảnh (Image)"><i class="fa-solid fa-image"></i></button>
             <button id="btn-fullscreen" class="fullscreen-btn" title="Toàn màn hình"><i class="fa-solid fa-expand"></i></button>
 
@@ -841,6 +843,8 @@
         const panelNotes = document.getElementById('panel-notes');
         const btnFullscreen = document.getElementById('btn-fullscreen');
         const btnDownload = document.getElementById('btn-download');
+        const btnToggleSteps = document.getElementById('btn-toggle-steps');
+        const iconToggleSteps = btnToggleSteps.querySelector('i');
         
         // Các nút Phóng to ảnh
         const btnToggleImg1 = document.getElementById('btn-toggle-image-1');
@@ -853,6 +857,7 @@
         let currentSlide = 0;
         const totalSlides = slides.length;
         let balloonInterval; 
+        let isLineByLineEnabled = true;
 
         // Đổi Giao Diện (Theme)
         function setTheme(themeName) {
@@ -894,7 +899,9 @@
             }
 
             const listItems = activeSlide.querySelectorAll('ul li');
-            if (isMovingForward) {
+            if (!isLineByLineEnabled) {
+                listItems.forEach(li => li.classList.add('visible'));
+            } else if (isMovingForward) {
                 listItems.forEach(li => li.classList.remove('visible'));
             } else {
                 listItems.forEach(li => li.classList.add('visible'));
@@ -904,7 +911,7 @@
             progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
             
             btnPrev.disabled = currentSlide === 0;
-            btnNext.disabled = currentSlide === totalSlides - 1 && activeSlide.querySelectorAll('ul li:not(.visible)').length === 0;
+            btnNext.disabled = currentSlide === totalSlides - 1 && (isLineByLineEnabled ? activeSlide.querySelectorAll('ul li:not(.visible)').length === 0 : true);
 
             const currentNotes = activeSlide.getAttribute('data-notes');
             panelNotes.style.display = 'none';
@@ -1065,11 +1072,31 @@
             }
         };
 
+        // Logic Bật/tắt hiện từng dòng
+        btnToggleSteps.addEventListener('click', () => {
+            isLineByLineEnabled = !isLineByLineEnabled;
+            if (isLineByLineEnabled) {
+                iconToggleSteps.className = 'fa-solid fa-bars-staggered';
+                btnToggleSteps.setAttribute('title', 'Đang bật: Hiện từng dòng');
+                btnToggleSteps.style.color = 'var(--text-main)';
+            } else {
+                iconToggleSteps.className = 'fa-solid fa-bars';
+                btnToggleSteps.setAttribute('title', 'Đang tắt: Hiện tất cả');
+                btnToggleSteps.style.color = 'var(--accent)';
+                
+                // Hiển thị ngay tất cả text của slide hiện tại
+                const activeSlide = slides[currentSlide];
+                const listItems = activeSlide.querySelectorAll('ul li');
+                listItems.forEach(li => li.classList.add('visible'));
+                btnNext.disabled = currentSlide === totalSlides - 1;
+            }
+        });
+
         function nextAction() {
             const activeSlide = slides[currentSlide];
             const hiddenItems = activeSlide.querySelectorAll('ul li:not(.visible)');
             
-            if (hiddenItems.length > 0) {
+            if (isLineByLineEnabled && hiddenItems.length > 0) {
                 hiddenItems[0].classList.add('visible');
                 if (currentSlide === totalSlides - 1 && hiddenItems.length === 1) {
                     btnNext.disabled = true;
@@ -1086,7 +1113,7 @@
             const activeSlide = slides[currentSlide];
             const visibleItems = activeSlide.querySelectorAll('ul li.visible');
 
-            if (visibleItems.length > 0) {
+            if (isLineByLineEnabled && visibleItems.length > 0) {
                 visibleItems[visibleItems.length - 1].classList.remove('visible');
                 btnNext.disabled = false;
             } else {
@@ -1146,7 +1173,7 @@
         // Xử lý nút Tải Ảnh Slide
         btnDownload.addEventListener('click', () => {
             const controls = document.querySelector('.controls');
-            const floatingBtns = document.querySelectorAll('.fullscreen-btn, .download-btn, .notes-btn, .toggle-image-btn');
+            const floatingBtns = document.querySelectorAll('.fullscreen-btn, .download-btn, .step-toggle-btn, .notes-btn, .toggle-image-btn');
             const themeSel = document.querySelector('.theme-selector');
             const slideWrapper = document.querySelector('.slide-wrapper');
             
