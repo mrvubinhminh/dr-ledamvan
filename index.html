@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Giảng: Soi Cổ Tử Cung Thai Kỳ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Theme 1: Teal & Rose (Mặc định) */
+            --primary: #006064; 
+            --primary-light: #e0f2f1; 
+            --primary-border: #80cbc4; 
+            --accent: #c2185b; 
+            --accent-light: #fce4ec;
+            
+            /* Các màu cố định cho Trạng thái */
+            --success: #10b981; 
+            --success-light: #ecfdf5;
+            --danger: #ef4444; 
+            --danger-light: #fef2f2;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --bg-body: #1f2937; 
+            --bg-slide: #ffffff;
+        }
+
+        /* Theme 2: Blue & Orange */
+        :root[data-theme="theme-blue"] {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --primary-border: #93c5fd;
+            --accent: #ea580c;
+            --accent-light: #ffedd5;
+        }
+
+        /* Theme 3: Green & Purple */
+        :root[data-theme="theme-green"] {
+            --primary: #064e3b;
+            --primary-light: #ecfdf5;
+            --primary-border: #6ee7b7;
+            --accent: #7e22ce;
+            --accent-light: #f3e8ff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-body);
+            background-image: radial-gradient(circle at center, #374151 0%, #111827 100%);
+            font-family: 'Times New Roman', Times, serif; 
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        #presentation-container {
+            position: relative; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .slide-wrapper {
+            position: relative; background-color: var(--bg-slide);
+            background-image: 
+                radial-gradient(circle at 100% 100%, rgba(0,0,0, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(0,0,0, 0.03) 0%, transparent 40%);
+            aspect-ratio: 16 / 9; max-width: 100vw; max-height: 100vh; width: auto; height: 100vh;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column;
+            transition: background-color 0.5s ease;
+        }
+
+        @media (min-aspect-ratio: 16/9) { .slide-wrapper { width: 100vw; height: auto; } }
+
+        .slide-wrapper::before, .slide-wrapper::after {
+            content: ''; position: absolute; width: 10vh; height: 10vh; z-index: 10; pointer-events: none;
+            transition: border-color 0.5s ease;
+        }
+        .slide-wrapper::before { top: 2vh; left: 2vh; border-top: 0.8vh solid var(--primary); border-left: 0.8vh solid var(--primary); }
+        .slide-wrapper::after { bottom: 0.5vh; right: 2vh; border-bottom: 0.8vh solid var(--accent); border-right: 0.8vh solid var(--accent); }
+
+        .inner-frame {
+            position: absolute; top: 3vh; bottom: 1.5vh; left: 3vh; right: 3vh;
+            border: 2px dashed var(--primary-border); pointer-events: none; z-index: 1;
+            transition: border-color 0.5s ease;
+        }
+
+        .slide {
+            display: none; flex: 1; padding: 5% 8%; box-sizing: border-box; flex-direction: column;
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2;
+        }
+
+        .slide.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .slide-header {
+            border-bottom: 3px solid var(--primary); padding-bottom: 1%; margin-bottom: 3%; position: relative; display: flex; align-items: center;
+            transition: border-color 0.5s ease;
+        }
+        
+        .slide-header::after {
+            content: ''; position: absolute; bottom: -5.5px; right: 0; width: 8px; height: 8px; background-color: var(--accent); border-radius: 50%;
+            transition: background-color 0.5s ease;
+        }
+
+        .slide-title {
+            color: var(--primary); font-size: 4.6vh; font-weight: 700; margin: 0; text-transform: uppercase;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); letter-spacing: 1px; display: flex; align-items: center; gap: 15px; 
+            transition: color 0.5s ease;
+        }
+
+        .slide-title i {
+            color: var(--accent); font-size: 4.8vh; background: var(--primary-light); padding: 10px; border-radius: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+        }
+
+        .slide-content { flex: 1; font-size: 4.8vh; color: var(--text-main); display: flex; flex-direction: column; justify-content: center; }
+
+        .split-layout { display: flex; flex: 1; gap: 30px; align-items: center; height: 100%; width: 100%;}
+        .split-layout .left-content { flex: 1; display: flex; flex-direction: column; justify-content: center; font-size: 4.4vh; color: var(--text-main); }
+        .split-layout .right-image { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vh;}
+        
+        .image-caption-container { display: flex; flex-direction: column; align-items: center; width: fit-content; max-width: 100%; max-height: 100%; }
+        .image-caption-container img { width: auto; max-width: 100%; max-height: 50vh; object-fit: contain; border-radius: 10px; border: 3px solid var(--primary-border); box-shadow: 0 8px 20px rgba(0,0,0,0.15); background: #fff; transition: border-color 0.5s ease; }
+        .dual-image-container .image-caption-container img { max-height: 25vh; }
+        .image-caption { width: 100%; max-width: 100%; text-align: center; font-size: 2.6vh; color: var(--text-muted); margin-top: 1.5vh; font-style: italic; line-height: 1.4; word-wrap: break-word;}
+
+        ul { list-style-type: none; padding-left: 0; margin: 0; }
+        ul li { position: relative; padding-left: 7vh; margin-bottom: 4vh; line-height: 1.45; opacity: 0; transform: translateX(-30px); transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        ul li.visible { opacity: 1; transform: translateX(0); }
+        ul li::before { content: '\f105'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 1.5vh; color: var(--accent); font-size: 4.4vh; top: 0.2vh; transition: transform 0.3s, color 0.5s ease; }
+        ul li.visible::before { transform: scale(1.2); }
+
+        ul.ref-list li { font-size: 2.6vh; margin-bottom: 3vh; line-height: 1.5; padding-left: 5vh; text-align: justify; }
+        ul.ref-list li::before { font-size: 2.8vh; top: 0.2vh; }
+        ul.ref-list li strong { color: var(--primary); transition: color 0.5s ease; }
+
+        /* Slide Tiêu đề 01 */
+        .slide-title-main { text-align: center; justify-content: center; align-items: center; background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%); transition: background 0.5s ease; }
+        .main-icon { font-size: 12vh; color: var(--primary); margin-bottom: 1vh; text-shadow: 3px 3px 6px rgba(0,0,0,0.15); transition: color 0.5s ease; }
+        .slide-title-main h1 { color: var(--primary); font-size: 4vh; margin-bottom: 1.5vh; text-transform: uppercase; letter-spacing: 4px; font-weight: normal; opacity: 0.9; transition: color 0.5s ease; }
+        .slide-title-main h2 { 
+            font-size: 9vh; font-weight: 900; margin-bottom: 6vh; letter-spacing: 2px; text-transform: uppercase;
+            background: linear-gradient(120deg, var(--accent) 30%, #ffffff 50%, var(--accent) 70%);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shineText 3.5s linear infinite; filter: drop-shadow(3px 5px 8px rgba(0,0,0,0.15));
+            transition: all 0.5s ease;
+        }
+        @keyframes shineText { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        .slide-title-main .author-info { background: rgba(255, 255, 255, 0.95); padding: 3vh 6vh; border-radius: 12px; border-left: 8px solid var(--primary); border-right: 8px solid var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: left; font-size: 3.5vh; line-height: 1.7; display: inline-block; transition: border-color 0.5s ease; }
+        .author-info i { color: var(--primary); margin-right: 10px; width: 30px; text-align: center; transition: color 0.5s ease; }
+
+        /* Slide cảnh báo */
+        .warning-slide { background-color: var(--accent-light); border: 0.5vh solid var(--accent); border-radius: 15px; margin: 3vh; padding: 3% 6%; box-shadow: inset 0 0 50px rgba(0,0,0, 0.05); transition: all 0.5s ease; }
+        .warning-slide .slide-header { border-bottom-color: var(--accent); }
+        .warning-slide .slide-header::after { background-color: var(--primary); }
+        .warning-slide .slide-title { color: var(--accent); }
+        .warning-slide .slide-title i { background: var(--accent); color: white; animation: warningFlash 2s infinite; }
+        @keyframes warningFlash { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.1); } }
+        .warning-slide ul li { color: var(--accent); font-weight: bold; }
+        .warning-slide ul li::before { content: '\f071'; color: var(--accent); font-size: 4.4vh; left: 0.5vh; }
+
+        /* ================== GIAO DIỆN TRẮC NGHIỆM ================== */
+        .quiz-slide { background: linear-gradient(135deg, var(--primary-light) 0%, #ffffff 100%); transition: background 0.5s ease; }
+        .quiz-slide::before { content: '\f059'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; font-size: 50vh; color: rgba(0, 0, 0, 0.02); right: -5vh; bottom: -5vh; z-index: 0; pointer-events: none; transform: rotate(-15deg); }
+        
+        .quiz-container { z-index: 1; position: relative; display: flex; flex-direction: column; justify-content: center; height: 100%; align-items: center; }
+        
+        .quiz-card {
+            background: white; width: 90%; border-radius: 20px; padding: 4vh 5vh;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08), 0 5px 15px rgba(0,0,0,0.03);
+            border-top: 6px solid var(--primary); position: relative; transition: border-color 0.5s ease;
+        }
+
+        .quiz-badge {
+            position: absolute; top: -2.5vh; left: 5vh; background: var(--accent); color: white;
+            padding: 0.8vh 2.5vh; border-radius: 20px; font-size: 2.2vh; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            letter-spacing: 1px; text-transform: uppercase; transition: background 0.5s ease;
+        }
+
+        .quiz-question { 
+            font-size: 4.2vh; color: var(--text-main); font-weight: bold; margin-bottom: 4vh; line-height: 1.5; 
+            text-align: justify; padding-left: 2vh; border-left: 5px solid var(--primary-light); transition: border-color 0.5s ease;
+        }
+        
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5vh; }
+        
+        .quiz-btn { 
+            display: flex; align-items: center; background: #f8fafc; border: 2px solid transparent; 
+            padding: 1.5vh; border-radius: 15px; font-size: 3.5vh; text-align: left; cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); font-family: 'Times New Roman', Times, serif; 
+            color: var(--text-main); box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        
+        .quiz-btn:hover { background: #f1f5f9; border-color: var(--primary-border); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
+        
+        .option-letter {
+            display: inline-flex; justify-content: center; align-items: center; width: 5vh; height: 5vh;
+            background: white; border-radius: 10px; font-weight: bold; color: var(--primary); font-size: 3vh;
+            margin-right: 2vh; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .option-text { flex: 1; line-height: 1.3; }
+
+        /* Trạng thái Nút Trắc nghiệm */
+        .quiz-btn.correct { background: var(--success-light) !important; border-color: var(--success) !important; color: #065f46 !important; transform: scale(1.02); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2); animation: pop 0.4s ease; }
+        .quiz-btn.correct .option-letter { background: var(--success); color: white; }
+        
+        .quiz-btn.wrong { background: var(--danger-light) !important; border-color: var(--danger) !important; color: #991b1b !important; animation: shake 0.4s ease; }
+        .quiz-btn.wrong .option-letter { background: var(--danger); color: white; }
+
+        .quiz-btn.reveal-correct { background: var(--success-light); border: 2px dashed var(--success); opacity: 0.9; }
+        .quiz-btn.reveal-correct .option-letter { background: var(--success); color: white; animation: pulseLetter 1s infinite; }
+
+        @keyframes pop { 50% { transform: scale(1.04); } }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
+        @keyframes pulseLetter { 0% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 0 10px var(--success); } 100% { transform: scale(1); } }
+
+        /* Hộp Feedback */
+        .quiz-feedback { margin-top: 3vh; opacity: 0; transition: opacity 0.4s; height: 0; overflow: hidden; }
+        .quiz-feedback.show { opacity: 1; height: auto; }
+        .alert { padding: 2vh 3vh; border-radius: 12px; font-size: 3.5vh; font-weight: bold; display: flex; align-items: center; gap: 1.5vh; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .alert-success { background: var(--success-light); color: #065f46; border-left: 6px solid var(--success); }
+        .alert-danger { background: var(--danger-light); color: #991b1b; border-left: 6px solid var(--danger); }
+
+        /* ========================================================================= */
+
+        /* Màn hình CẢM ƠN */
+        .thank-you-slide { justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, var(--primary-light) 0%, #ffffff 100%); position: relative; overflow: hidden; transition: background 0.5s ease;}
+        .thank-you-title { color: var(--primary); font-size: 7vh; margin-bottom: 5vh; text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.15); z-index: 10; position: relative; transition: color 0.5s ease;}
+        .sunflower-container { display: flex; gap: 4vw; justify-content: center; z-index: 10; position: relative; }
+        .sunflower { font-size: 14vh; animation: bloom 3s ease-in-out infinite alternate; transform-origin: bottom center; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
+        .sunflower.delay-1 { animation-delay: 0.7s; }
+        .sunflower.delay-2 { animation-delay: 1.4s; }
+        @keyframes bloom { 0% { transform: scale(0.8) rotate(-8deg); } 100% { transform: scale(1.2) rotate(8deg); } }
+        #balloon-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: hidden; }
+        .balloon { position: absolute; bottom: -20vh; font-size: 8vh; animation: floatUp linear forwards; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
+        .balloon.pop { animation: popBalloon 0.3s ease-out forwards; }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-120vh) scale(1); opacity: 1; } }
+        @keyframes popBalloon { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.8); opacity: 0.8; } 100% { transform: scale(2); opacity: 0; } }
+
+        /* Footer & Controls */
+        /* Đã nâng Footer lên trên viền đứt 1 xíu (2.5vh so với 1.5vh) */
+        .slide-footer { position: absolute; bottom: 2.5vh; left: 5vh; right: 5vh; display: flex; justify-content: space-between; color: var(--primary); font-size: 2.5vh; font-weight: bold; z-index: 10; transition: color 0.5s ease; align-items: center;}
+        
+        /* Theme Selector */
+        .theme-selector { display: inline-flex; gap: 10px; margin-left: 20px; vertical-align: middle; }
+        .theme-dot { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .theme-dot:hover { transform: scale(1.3); }
+
+        .progress-bar-container { position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #e5e7eb; z-index: 10; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.4s ease-out, background 0.5s ease; }
+        
+        .controls { position: absolute; bottom: 2vh; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 100; }
+        
+        /* Nút Điều hướng mờ, trong suốt chuẩn Glassmorphism */
+        .btn-nav { 
+            background: rgba(255, 255, 255, 0.4); 
+            color: var(--primary); 
+            border: 1px solid rgba(255,255,255,0.6); 
+            padding: 8px 25px; border-radius: 25px; cursor: pointer; font-size: 18px; font-weight: bold; 
+            font-family: 'Times New Roman', Times, serif; transition: all 0.3s; 
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+        .btn-nav:hover { background: rgba(255, 255, 255, 0.8); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; background: rgba(255, 255, 255, 0.2); }
+        
+        .notes-btn { position: absolute; bottom: 2.5vh; right: 3.5vh; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 3px solid white; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.8vh; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.3); z-index: 100; display: none; animation: pulse 2s infinite; }
+        .notes-panel { position: absolute; bottom: 90px; right: 3.5vh; width: 450px; background: rgba(255, 255, 255, 0.95); border-top: 5px solid #f59e0b; padding: 25px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); font-size: 2.5vh; line-height: 1.6; color: #111; z-index: 100; display: none; backdrop-filter: blur(10px); }
+        .fullscreen-btn { position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.2); color: white; border: 1px solid rgba(255,255,255,0.3); width: 45px; height: 45px; border-radius: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 100; transition: all 0.2s; backdrop-filter: blur(5px); }
+        .download-btn { position: absolute; top: 20px; right: 75px; background: rgba(0, 0, 0, 0.2); color: white; border: 1px solid rgba(255,255,255,0.3); width: 45px; height: 45px; border-radius: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 100; transition: all 0.2s; backdrop-filter: blur(5px);}
+        .download-btn:hover, .fullscreen-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.05); }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+
+        /* IN PDF */
+        @media print {
+            @page { size: landscape; margin: 0; }
+            body, html { background: white !important; background-image: none !important; height: auto; overflow: visible !important; }
+            #presentation-container { display: block; height: auto; }
+            .slide-wrapper { box-shadow: none !important; width: 100% !important; height: auto !important; display: block !important; background: white !important; }
+            .slide-wrapper::before, .slide-wrapper::after { display: none !important; }
+            .slide { display: flex !important; page-break-after: always; height: 100vh !important; padding: 4% 6% !important; opacity: 1 !important; transform: none !important; position: relative !important; background: white; }
+            ul li, ul li.visible { opacity: 1 !important; transform: none !important; }
+            .slide-title-main h2 { -webkit-text-fill-color: var(--accent) !important; background: none !important; }
+            .slide-title-main .author-info, .slide-title i, .warning-slide { box-shadow: none !important; border: 2px solid var(--primary-border); }
+            .controls, .notes-btn, .fullscreen-btn, .download-btn, .progress-bar-container, .notes-panel, #balloon-container { display: none !important; }
+            .slide-footer { display: none !important; }
+            
+            .quiz-card { border: 2px solid var(--primary-border); box-shadow: none; padding: 2vh; }
+            .quiz-btn { border: 1px solid #ccc; color: black; break-inside: avoid;}
+            .quiz-btn.correct { background: #e0f2f1 !important; border: 2px solid var(--primary) !important; color: black !important;}
+        }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-container">
+        <div class="slide-wrapper">
+            <div class="progress-bar-container"><div class="progress-bar" id="progress"></div></div>
+            <div class="inner-frame"></div>
+
+            <!-- PHẦN 1: MỞ ĐẦU -->
+            <div class="slide slide-title-main active" data-notes="Chào các em. Khi cầm một tờ kết quả Pap bất thường, thai phụ thường khóc vì sợ ung thư và sợ mất con. Nhiệm vụ của chúng ta là gì? Là phải soi cổ tử cung để loại trừ ung thư mà vẫn giữ an toàn cho thai. Chúng ta cùng bắt đầu nhé!">
+                <i class="fa-solid fa-stethoscope main-icon"></i>
+                <h1>Hướng dẫn thực hành lâm sàng</h1>
+                <h2>Soi cổ tử cung thai kỳ</h2>
+                <div class="author-info">
+                    <strong><i class="fa-solid fa-chalkboard-user"></i> Giảng viên trình bày:</strong><br>
+                    <i class="fa-solid fa-user-doctor"></i> BS. Lê Đàm Vân<br>
+                    <i class="fa-solid fa-hospital"></i> Chuyên khoa 2, BV Từ Dũ
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-book-medical"></i> Mục tiêu - Kiến thức</h2></div>
+                <div class="slide-content"><ul><li>Hiểu sinh lý cổ tử cung.</li><li>Nắm biến đổi tế bào học.</li><li>Nhận diện khó khăn khi soi.</li><li>Phân biệt sinh lý và bệnh.</li><li>Nắm phác đồ theo dõi bệnh.</li></ul></div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-microscope"></i> Mục tiêu - Kỹ năng</h2></div>
+                <div class="slide-content"><ul><li>Bộc lộ rõ cổ tử cung.</li><li>Lấy sạch chất nhầy an toàn.</li><li>Bấm sinh thiết cầm máu tốt.</li><li>Không nạo kênh cổ tử cung.</li><li>Xử trí đúng tình huống cấp.</li></ul></div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-hands-holding-child"></i> Mục tiêu - Thái độ</h2></div>
+                <div class="slide-content"><ul><li>Trấn an tâm lý thai phụ.</li><li>Thao tác nhẹ nhàng, cẩn thận.</li><li>Tôn trọng người bệnh tuyệt đối.</li><li>Đảm bảo an toàn thai nhi.</li><li>Tuân thủ quy trình vô khuẩn.</li></ul></div>
+            </div>
+
+            <div class="slide" data-notes="Đây là tình huống có vấn đề thực tế mà các em sẽ gặp rất nhiều ở phòng khám. Thai phụ hoảng loạn, sợ hãi khi cầm kết quả bất thường. Bài toán đặt ra là: Làm sao chẩn đoán được bệnh cho mẹ mà không làm tổn hại đến con? Bài học hôm nay sẽ giúp các em trả lời câu hỏi này.">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-user-injured"></i> Tình huống lâm sàng</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Thai phụ 28 tuổi, thai 16 tuần.</li><li>Kết quả Pap: HSIL, nguy cơ cao.</li><li>Thai phụ khóc, rất sợ ung thư.</li><li>Lo sợ can thiệp làm sẩy thai.</li><li style="color: var(--accent); font-weight: bold; font-style: italic;">Bác sĩ cần xử trí thế nào?</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/Z11TwRcT/edeb9ad47b86.png" alt="Thai phụ lo lắng tại phòng khám">
+                            <div class="image-caption">Thai phụ lo lắng khi nhận kết quả khám bất thường</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHẦN 2: NỘI DUNG -->
+            <div class="slide" data-notes="Theo các em, thai kỳ có làm ung thư cổ tử cung tiến triển nhanh hơn không? [Chờ 2 giây]. Câu trả lời là KHÔNG. Thai kỳ không làm bệnh nặng thêm!">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-clipboard-list"></i> Đại cương soi thai kỳ</h2></div>
+                <div class="slide-content"><ul><li>Bệnh không tăng khi có thai.</li><li>Thai phụ thường rất lo lắng.</li><li>Mục đích: loại trừ ung thư.</li><li>Tránh can thiệp điều trị sai.</li><li>Tránh nguy cơ sinh non, sẩy.</li></ul></div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chart-pie"></i> Dịch tễ học thai kỳ</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Tỷ lệ bất thường hai phần trăm.</li><li>Đa số là mức độ thấp.</li><li>Ung thư xâm lấn rất hiếm.</li><li>ASCUS, LSIL đều phải soi cổ.</li><li>Khó đọc do cường Estrogen nội.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/r2dZZq1j/3a91a8a64db8.png" alt="Dịch tễ học">
+                            <div class="image-caption">Lộ tuyến và vùng trắng sau acid acetic ở vị trí 9 giờ. Mô học sang thương trong biểu mô mức độ thấp.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-person-pregnant"></i> Sinh lý thai kỳ 1</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Cường Estrogen khi mang thai.</li><li>Cổ tử cung to và mềm.</li><li>Tăng sinh mạch máu rất nhiều.</li><li>Tiết nhiều chất nhầy đặc dính.</li><li>Phản ứng màng rụng mô đệm.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/CsXS5m4p/a56dcb35608a.png" alt="Sinh lý 1">
+                            <div class="image-caption">Lộ tuyến cổ tử cung, chuyển sản và chất nhầy đặc ở trung tâm.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-dna"></i> Sinh lý thai kỳ 2</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Tế bào tuyến lộn ra ngoài.</li><li>Lộ tuyến rõ ở người con so.</li><li>Môi trường acid gây chuyển sản.</li><li>Chuyển sản chưa trưởng thành nhiều.</li><li>Rất dễ nhầm với tiền ung thư.</li></ul></div>
+                    <div class="right-image dual-image-container">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/wr8gXXJJ/9010c48aa177.png" alt="Sinh lý 2A">
+                        </div>
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/4gTnHkD7/02c4349722a9.png" alt="Sinh lý 2B">
+                            <div class="image-caption">Lộ tuyến và chuyển sản cổ tử cung trong 3 tháng đầu thai kỳ.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" data-notes="Khám phụ khoa cho bà bầu rất khó. Đặt cái mỏ vịt vào là thành âm đạo sa xuống che kín hết. Cổ tử cung thì chạm nhẹ là chảy máu. Vậy ta phải làm sao?">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Khó khăn khi soi</h2></div>
+                <div class="slide-content"><ul><li>Thành âm đạo sa che khuất.</li><li>Chất nhầy đặc dính khó lau.</li><li>Cổ tử cung rất dễ chảy máu.</li><li>Chuyển sản non tạo vết trắng.</li><li>Phản ứng màng rụng giống K.</li></ul></div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-kit-medical"></i> Kỹ thuật soi chuẩn</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Dùng mỏ vịt kích cỡ lớn.</li><li>Thao tác phải cực kỳ nhẹ.</li><li>Dùng acid acetic loại chất nhầy.</li><li>Dùng tăm bông chùi rất nhẹ.</li><li>Tránh làm chảy máu tổn thương.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/n8QpMf0x/c7cda7e85a8d.png" alt="Mỏ vịt">
+                            <div class="image-caption">Mỏ vịt âm đạo.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-regular fa-eye"></i> Nhận diện tổn thương</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Vết trắng sinh lý thường nhạt.</li><li>Khó phân biệt với LSIL thực.</li><li>HSIL thường có vết trắng đậm.</li><li>Chú ý mạch máu bất thường.</li><li>Lát đá, chấm đáy thô rõ.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/M5yvw1ZT/071135d076da.png" alt="Tổn thương">
+                            <div class="image-caption">Lát đá và mạch máu bất thường HSIL.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-code-branch"></i> Chẩn đoán phân biệt</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Phân biệt sinh lý và bệnh.</li><li>Phản ứng màng rụng và K.</li><li>Chuyển sản non và LSIL, HSIL.</li><li>Ung thư xâm lấn thường sùi.</li><li>K xâm lấn có mạch máu dị.</li></ul></div>
+                    <div class="right-image dual-image-container">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/WpdfGPXb/81aa9cd7b5b4.png" alt="PB 1">
+                            <div class="image-caption" style="margin-bottom: 1vh;">Lộn tuyến cổ tử cung, 3 tháng giữa thai kỳ biểu mô trắng... Sinh thiết chỉ thay đổi sinh lý.</div>
+                        </div>
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/hJD0kFZ5/bb0b9d087997.png" alt="PB 2">
+                            <div class="image-caption">Chuyển sản chưa trưởng thành ở phụ nữ có thai.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide warning-slide" data-notes="Slide tiếp theo là mạng sống của thai nhi! Các em lấy bút đỏ gạch dưới cho tôi: Chống chỉ định tuyệt đối nạo kênh cổ tử cung!">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-triangle-exclamation"></i> Chống chỉ định tuyệt đối</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Không nạo kênh cổ tử cung!</li><li>Nguy cơ vỡ ối rất cao.</li><li>Nguy cơ sinh non rất lớn.</li><li>Chảy máu ồ ạt khó cầm.</li><li>Ghi nhớ: Tuyệt đối không nạo!</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/GvKwFsjp/34f5544dcc23.png" alt="Nạo kênh" style="border-color: var(--accent);">
+                            <div class="image-caption" style="color: var(--accent);">Dụng cụ nạo kênh cổ tử cung.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-scalpel"></i> Nguyên tắc sinh thiết</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Chỉ sinh thiết nghi ung thư.</li><li>Không sinh thiết để tìm CIN.</li><li>Bấm đúng vị trí nghi ngờ.</li><li>Dùng kềm nhỏ hạn chế máu.</li><li>Lấy mẫu phải có mô đệm.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/8GVwH1d/b5d20655df6f.png" alt="Kềm">
+                            <div class="image-caption">Các loại kềm sinh thiết.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-droplet"></i> Xử trí chảy máu</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Cổ tử cung thai kỳ nhiều máu.</li><li>Chuẩn bị sẵn dung dịch Monsel.</li><li>Ép Monsel vào vết bấm ngay.</li><li>Giữ chặt tăm bông nửa phút.</li><li>Đảm bảo cầm máu hoàn toàn.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/G47MLytS/4b78f408dc9f.png" alt="Monsel">
+                            <div class="image-caption">Dung dịch Monsel.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-file-medical"></i> Quản lý tổn thương CIN</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>CIN một, hai, ba: Theo dõi.</li><li>Không khoét chóp trong thai kỳ.</li><li>Tỷ lệ tự khỏi sau sinh cao.</li><li>Bệnh không ảnh hưởng thai nhi.</li><li>Vẫn cho phép sinh ngả âm đạo.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/XkkcbQwX/59cc93256fde.png" alt="CIN">
+                            <div class="image-caption">Vùng trắng sau acid acetic và lát đá. Mô học tổn thương trong biểu mô mức độ cao.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-ribbon"></i> Quản lý nghi ung thư</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Khối u sùi, loét: Bấm ngay.</li><li>Chuyển tuyến chuyên khoa ung bướu.</li><li>Cân nhắc mổ lấy thai sau đó.</li><li>Điều trị ung thư sau lấy thai.</li><li>Cá thể hóa theo tuổi thai.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/KzbhtBWy/d9ea0e39ab4d.png" alt="K">
+                            <div class="image-caption">Thai phụ có thai 20 tuần. Tế bào CTC bất thường nghi ngờ ung thư xâm lấn.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-baby"></i> Theo dõi hậu sản</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Cổ tử cung phục hồi sau sinh.</li><li>Đánh giá lại mười hai tuần.</li><li>Làm lại tế bào học, soi cổ.</li><li>Có thể khoét chóp lúc này.</li><li>HSIL hiếm khi tự khỏi bệnh.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/cScbkkxL/ab876554c9ee.png" alt="Hậu sản">
+                            <div class="image-caption">Cổ tử cung bình thường thấy rõ vùng tiếp nối lát-trụ.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHẦN 3: TRẮC NGHIỆM ÔN TẬP (GIAO DIỆN MỚI) -->
+            <div class="slide quiz-slide" data-notes="Mời các em cùng ôn lại bài bằng 10 câu trắc nghiệm nhanh nhé. Ai xung phong trả lời câu đầu tiên?">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 1 / 10</div>
+                        <div class="quiz-question">Tần suất phát hiện bất thường trên tế bào học cổ tử cung trong giai đoạn mang thai khoảng bao nhiêu?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'A')"><span class="option-letter">A</span><span class="option-text">1,26 - 2,2%</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'B')"><span class="option-letter">B</span><span class="option-text">5 - 10%</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'C')"><span class="option-letter">C</span><span class="option-text">15 - 20%</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">Trên 30%</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 2 / 10</div>
+                        <div class="quiz-question">Những thay đổi sinh lý ở cổ tử cung khi mang thai (to ra, tăng sinh mạch máu, tăng tiết nhầy) chủ yếu là do tình trạng cường nội tiết tố nào?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Progesteron</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'B')"><span class="option-letter">B</span><span class="option-text">Estrogen</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'C')"><span class="option-letter">C</span><span class="option-text">Prolactin</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">Oxytocin</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 3 / 10</div>
+                        <div class="quiz-question">Đặc điểm nào sau đây KHÔNG PHẢI là thay đổi sinh lý bình thường của cổ tử cung trong thai kỳ?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Tăng sinh mạch máu phong phú</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'B')"><span class="option-letter">B</span><span class="option-text">Cổ tử cung mềm và to ra</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'C')"><span class="option-letter">C</span><span class="option-text">Giảm tiết chất nhầy âm đạo</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">Tế bào tuyến lộn ra ngoài</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 4 / 10</div>
+                        <div class="quiz-question">Mục đích chính của việc soi cổ tử cung khi phát hiện tế bào học bất thường ở phụ nữ có thai là gì?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Điều trị dứt điểm tổn thương CIN 1</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'B')"><span class="option-letter">B</span><span class="option-text">Loại trừ K xâm lấn, tránh can thiệp sai</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'C')"><span class="option-letter">C</span><span class="option-text">Nạo kênh cổ tử cung để chẩn đoán</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">Khoét chóp dự phòng viêm nhiễm</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card" style="border-top-color: var(--accent);">
+                        <div class="quiz-badge" style="background: var(--accent);">Câu 5 / 10</div>
+                        <div class="quiz-question" style="color: var(--accent);">Thủ thuật nào bị CHỐNG CHỈ ĐỊNH TUYỆT ĐỐI khi soi cổ tử cung ở thai phụ?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Bôi dung dịch acid acetic</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'B')"><span class="option-letter">B</span><span class="option-text">Bấm sinh thiết bằng kềm nhỏ</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'C')"><span class="option-letter">C</span><span class="option-text">Bôi dung dịch Monsel cầm máu</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'D')"><span class="option-letter">D</span><span class="option-text">Nạo kênh cổ tử cung</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 6 / 10</div>
+                        <div class="quiz-question">Lý do chống chỉ định nạo kênh cổ tử cung trong thai kỳ là gì?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Nguy cơ vỡ màng ối trước chuyển dạ</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'B')"><span class="option-letter">B</span><span class="option-text">Nguy cơ sanh non</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'C')"><span class="option-letter">C</span><span class="option-text">Xuất huyết ồ ạt không cầm được</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'D')"><span class="option-letter">D</span><span class="option-text">Tất cả các ý trên đều đúng</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 7 / 10</div>
+                        <div class="quiz-question">Hướng xử trí đúng đắn nhất đối với tổn thương tiền ung thư (CIN) phát hiện trong thai kỳ là gì?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Khoét chóp cổ tử cung ngay lập tức</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'B')"><span class="option-letter">B</span><span class="option-text">Phẫu thuật cắt tử cung nguyên khối</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'C')"><span class="option-letter">C</span><span class="option-text">Theo dõi thai thường kỳ, đánh giá sau sinh</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">Chấm dứt thai kỳ để điều trị mẹ</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 8 / 10</div>
+                        <div class="quiz-question">Tổn thương tiền ung thư (CIN) trong thai kỳ có ảnh hưởng đến phương pháp sinh của sản phụ không?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Bắt buộc phải mổ lấy thai chủ động</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'B')"><span class="option-letter">B</span><span class="option-text">Vẫn có thể sinh thường ngả âm đạo</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'C')"><span class="option-letter">C</span><span class="option-text">Luôn gây sinh non nên cần mổ sớm</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">Sẽ gây băng huyết sau sinh tự nhiên</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 9 / 10</div>
+                        <div class="quiz-question">Thời điểm nào là tốt nhất để tiến hành đánh giá lại (tế bào học và soi cổ) tổn thương CIN sau sinh?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'A')"><span class="option-letter">A</span><span class="option-text">Ngay trong ngày đầu sau sinh</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'B')"><span class="option-letter">B</span><span class="option-text">2 đến 4 tuần sau sinh</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'C')"><span class="option-letter">C</span><span class="option-text">8 đến 12 tuần sau sinh</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">6 tháng sau sinh</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide quiz-slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
+                <div class="quiz-container">
+                    <div class="quiz-card">
+                        <div class="quiz-badge">Câu 10 / 10</div>
+                        <div class="quiz-question">Tiên lượng đối với tổn thương CIN sau khi sinh được đánh giá như thế nào?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkAnswer(this, true, 'A')"><span class="option-letter">A</span><span class="option-text">Tỷ lệ tự thoái triển (tự khỏi) rất cao</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'B')"><span class="option-letter">B</span><span class="option-text">Bệnh diễn tiến cực nhanh thành ung thư</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'C')"><span class="option-letter">C</span><span class="option-text">Thai nghén làm tiên lượng tồi tệ hơn</span></button>
+                            <button class="quiz-btn" onclick="checkAnswer(this, false, 'D')"><span class="option-letter">D</span><span class="option-text">Không thể tự khỏi, bắt buộc xạ trị</span></button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHẦN 4: ĐÁNH GIÁ & TÀI LIỆU -->
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-clipboard-check"></i> Đánh giá học viên</h2></div>
+                <div class="slide-content"><ul><li>Hình thức: Thi chạy trạm OSCE.</li><li>Công cụ: Bảng kiểm lâm sàng.</li><li>Kỹ năng chọn mỏ vịt to.</li><li>Nhận diện chống chỉ định nạo.</li><li>Xử lý tình huống chảy máu.</li></ul></div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-list-check"></i> Bảng kiểm thực hành</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Bước 1: Tư vấn thai phụ tốt.</li><li>Bước 2: Bộc lộ không chảy máu.</li><li>Bước 3: Lấy sạch nhầy nhẹ nhàng.</li><li>Bước 4: Cầm máu bằng Monsel đúng.</li><li>Bước 5: Không đưa kềm vào kênh.</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/C5nrzKKM/1bcd5e8c33e3.png" alt="Khay dụng cụ">
+                            <div class="image-caption">Khay dụng cụ Soi cổ tử cung.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE TÀI LIỆU THAM KHẢO -->
+            <div class="slide">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-book-bookmark"></i> Tài liệu tham khảo</h2></div>
+                <div class="slide-content">
+                    <ul class="ref-list">
+                        <li><strong>Phác đồ Bệnh viện Từ Dũ:</strong> Phác đồ bệnh viện Từ Dũ năm 2025.</li>
+                        <li><strong>Tài liệu Soi cổ tử cung:</strong> Tài liệu đào tạo liên tục Soi cổ tử cung (Lưu hành nội bộ), Bệnh viện Từ Dũ, TP. Hồ Chí Minh, 01/2020; Barbara S. Apger MD, MS, David G. Weismiller (2008), “Colposcopy Principles and Practice”, An intergrated Text book and Atlas - 2nd Edition - Chapter 21 - pp411-19.</li>
+                        <li><strong>Hướng dẫn của Bộ Y tế:</strong> Hướng dẫn dự phòng và kiểm soát ung thư cổ tử cung, Bộ Y tế ban hành năm 2017; Hướng dẫn sàng lọc, điều trị tổn thương tiền ung thư để dự phòng thứ cấp ung thư cổ tử cung, Hà Nội, tháng 5-2011.</li>
+                        <li><strong>Tiêu chuẩn Bethesda 2014:</strong> Ritu Nayar, David C. Wilbur (eds.) - The Bethesda System for Reporting Cervical Cytology: Definitions, Criteria, and Explanatory Notes - Springer International Publishing, 2015.</li>
+                        <li><strong>Tổ chức Y tế Thế giới:</strong> World Health Organization. Comprehensive cervical cancer control: a guide to essential practice - 2nd ed, Geneva, 2014.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- MÀN HÌNH CẢM ƠN -->
+            <div class="slide thank-you-slide" data-notes="Bài giảng của chúng ta hôm nay đến đây là kết thúc. Cảm ơn các em đã tích cực tham gia tương tác. Chúc các em sẽ luôn tự tin và vững vàng khi thực hành lâm sàng!">
+                <div class="thank-you-content">
+                    <h1 class="thank-you-title">CẢM ƠN CÁC EM ĐÃ THEO DÕI BÀI HỌC!</h1>
+                    <div class="sunflower-container">
+                        <span class="sunflower">🌻</span>
+                        <span class="sunflower delay-1">🌻</span>
+                        <span class="sunflower delay-2">🌻</span>
+                        <span class="sunflower delay-1">🌻</span>
+                        <span class="sunflower">🌻</span>
+                    </div>
+                </div>
+                <div id="balloon-container"></div>
+            </div>
+
+            <!-- Footer & Controls -->
+            <div class="slide-footer">
+                <span id="footer-course">
+                    <i class="fa-solid fa-user-doctor" style="margin-right: 8px;"></i>BS.CK2 - Lê Đàm Vân
+                    <!-- Nút Chọn Theme -->
+                    <div class="theme-selector">
+                        <span class="theme-dot" onclick="setTheme('theme-default')" style="background: #006064;" title="Teal - Rose (Mặc định)"></span>
+                        <span class="theme-dot" onclick="setTheme('theme-blue')" style="background: #1e3a8a;" title="Blue - Orange"></span>
+                        <span class="theme-dot" onclick="setTheme('theme-green')" style="background: #064e3b;" title="Green - Purple"></span>
+                    </div>
+                </span>
+                <span id="footer-page"></span>
+            </div>
+            
+            <button id="btn-notes" class="notes-btn" title="Lời giảng"><i class="fa-solid fa-comment-medical"></i></button>
+            <div id="panel-notes" class="notes-panel"></div>
+            <button id="btn-download" class="download-btn" title="Tải PDF làm tài liệu"><i class="fa-solid fa-file-pdf" style="font-size: 16px;"></i></button>
+            <button id="btn-fullscreen" class="fullscreen-btn" title="Toàn màn hình"><i class="fa-solid fa-expand" style="font-size: 24px;"></i></button>
+
+        </div>
+
+        <div class="controls">
+            <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-arrow-left"></i> Trước</button>
+            <button class="btn-nav" id="btn-next">Tiếp <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progress');
+        const pageText = document.getElementById('footer-page');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnNotes = document.getElementById('btn-notes');
+        const panelNotes = document.getElementById('panel-notes');
+        const btnFullscreen = document.getElementById('btn-fullscreen');
+        const btnDownload = document.getElementById('btn-download');
+        const iconFullscreen = btnFullscreen.querySelector('i');
+        
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        let balloonInterval; 
+
+        // Đổi Giao Diện (Theme)
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+        }
+
+        function updateSlide(isMovingForward = true) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            const activeSlide = slides[currentSlide];
+            activeSlide.classList.add('active');
+            
+            const listItems = activeSlide.querySelectorAll('ul li');
+            if (isMovingForward) {
+                listItems.forEach(li => li.classList.remove('visible'));
+            } else {
+                listItems.forEach(li => li.classList.add('visible'));
+            }
+
+            pageText.innerText = `${currentSlide + 1} / ${totalSlides}`;
+            progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+            
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === totalSlides - 1 && activeSlide.querySelectorAll('ul li:not(.visible)').length === 0;
+
+            const currentNotes = activeSlide.getAttribute('data-notes');
+            panelNotes.style.display = 'none';
+            if (currentNotes) {
+                btnNotes.style.display = 'flex';
+                panelNotes.innerText = currentNotes;
+            } else {
+                btnNotes.style.display = 'none';
+            }
+
+            if (activeSlide.classList.contains('thank-you-slide')) {
+                triggerBalloons(true);
+            } else {
+                triggerBalloons(false);
+            }
+        }
+
+        function triggerBalloons(isActive) {
+            const container = document.getElementById('balloon-container');
+            if (!container) return;
+
+            if (isActive) {
+                balloonInterval = setInterval(() => {
+                    const balloon = document.createElement('div');
+                    balloon.classList.add('balloon');
+                    balloon.innerText = '🎈';
+                    
+                    const hue = Math.floor(Math.random() * 360);
+                    balloon.style.filter = `hue-rotate(${hue}deg) drop-shadow(0 5px 5px rgba(0,0,0,0.2))`;
+                    
+                    balloon.style.left = Math.random() * 90 + 5 + '%';
+                    const duration = Math.random() * 2 + 3; 
+                    balloon.style.animationDuration = duration + 's';
+                    
+                    container.appendChild(balloon);
+
+                    setTimeout(() => {
+                        balloon.innerHTML = '✨'; 
+                        balloon.classList.add('pop');
+                        
+                        setTimeout(() => {
+                            if (balloon.parentNode) balloon.remove();
+                        }, 300);
+                    }, duration * 1000 * (0.6 + Math.random() * 0.2));
+
+                }, 400);
+            } else {
+                clearInterval(balloonInterval);
+                container.innerHTML = ''; 
+            }
+        }
+
+        window.checkAnswer = function(btn, isCorrect, letter) {
+            const container = btn.closest('.quiz-container');
+            const feedback = container.querySelector('.quiz-feedback');
+            const allBtns = container.querySelectorAll('.quiz-btn');
+
+            allBtns.forEach(b => {
+                b.style.pointerEvents = 'none'; // Khóa nút
+                
+                // Nếu chọn sai, tự động đánh dấu làm nổi bật câu đúng (Nét đứt, biểu tượng Check)
+                if(b.getAttribute('onclick').includes('true') && !isCorrect) {
+                    b.classList.add('reveal-correct');
+                    const correctLetterSpan = b.querySelector('.option-letter');
+                    if(correctLetterSpan) correctLetterSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
+                }
+            });
+
+            const letterSpan = btn.querySelector('.option-letter');
+
+            if(isCorrect) {
+                btn.classList.add('correct');
+                if(letterSpan) letterSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
+                feedback.innerHTML = '<div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> Chính xác! Tuyệt vời!</div>';
+                feedback.classList.add('show');
+            } else {
+                btn.classList.add('wrong');
+                if(letterSpan) letterSpan.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                feedback.innerHTML = '<div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> Sai rồi, đáp án đúng đã được đánh dấu màu xanh!</div>';
+                feedback.classList.add('show');
+            }
+        }
+
+        function nextAction() {
+            const activeSlide = slides[currentSlide];
+            const hiddenItems = activeSlide.querySelectorAll('ul li:not(.visible)');
+            
+            if (hiddenItems.length > 0) {
+                hiddenItems[0].classList.add('visible');
+                if (currentSlide === totalSlides - 1 && hiddenItems.length === 1) {
+                    btnNext.disabled = true;
+                }
+            } else {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateSlide(true);
+                }
+            }
+        }
+
+        function prevAction() {
+            const activeSlide = slides[currentSlide];
+            const visibleItems = activeSlide.querySelectorAll('ul li.visible');
+
+            if (visibleItems.length > 0) {
+                visibleItems[visibleItems.length - 1].classList.remove('visible');
+                btnNext.disabled = false;
+            } else {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateSlide(false);
+                }
+            }
+        }
+
+        btnNext.addEventListener('click', nextAction);
+        btnPrev.addEventListener('click', prevAction);
+
+        document.getElementById('presentation-container').addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('.controls') || e.target.closest('.notes-panel') || e.target.closest('.quiz-btn') || e.target.closest('.theme-dot')) return;
+            nextAction();
+        });
+
+        btnNotes.addEventListener('click', () => {
+            panelNotes.style.display = panelNotes.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextAction();
+            } else if (e.key === 'ArrowLeft') {
+                prevAction();
+            }
+        });
+
+        btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(`Error: ${err.message}`));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                iconFullscreen.classList.remove('fa-expand');
+                iconFullscreen.classList.add('fa-compress');
+            } else {
+                iconFullscreen.classList.remove('fa-compress');
+                iconFullscreen.classList.add('fa-expand');
+            }
+        });
+
+        btnDownload.addEventListener('click', () => {
+            window.print();
+        });
+
+        updateSlide();
+    </script>
+</body>
+</html>
