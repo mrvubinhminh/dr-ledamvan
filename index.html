@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bài Giảng: Soi Cổ Tử Cung Thai Kỳ</title>
+    <!-- Thư viện Icon FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Thư viện html2canvas để chụp ảnh slide -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         :root {
@@ -24,6 +27,9 @@
             --text-muted: #4b5563;
             --bg-body: #1f2937; 
             --bg-slide: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --bg-quiz-btn: #f8fafc;
+            --bg-quiz-btn-hover: #f1f5f9;
         }
 
         /* Theme 2: Blue & Orange */
@@ -44,6 +50,31 @@
             --accent-light: #f3e8ff;
         }
 
+        /* Theme 4: Dark Mode (Ban Đêm) */
+        :root[data-theme="theme-dark"] {
+            --primary: #22d3ee; 
+            --primary-light: #1e3a8a; 
+            --primary-border: #3b82f6; 
+            --accent: #f472b6; 
+            --accent-light: #4c0519; 
+            --text-main: #f9fafb; 
+            --text-muted: #d1d5db; 
+            --bg-body: #000000; 
+            --bg-slide: #111827; 
+            --bg-card: rgba(31, 41, 55, 0.95); 
+            --bg-quiz-btn: #374151; 
+            --bg-quiz-btn-hover: #4b5563; 
+        }
+
+        /* TIA LAZE XANH LÁ (Custom Cursor) */
+        body, .slide-wrapper, .slide-wrapper * {
+            cursor: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" fill="%2300ff00"/><circle cx="12" cy="12" r="7" fill="none" stroke="%2300ff00" stroke-width="2" opacity="0.6"/></svg>') 12 12, auto !important;
+        }
+        
+        button, .theme-dot, .quiz-btn, .fullscreen-btn, .download-btn, .notes-btn, .toggle-image-btn {
+            cursor: pointer !important;
+        }
+
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-body);
@@ -61,8 +92,8 @@
         .slide-wrapper {
             position: relative; background-color: var(--bg-slide);
             background-image: 
-                radial-gradient(circle at 100% 100%, rgba(0,0,0, 0.02) 0%, transparent 50%),
-                radial-gradient(circle at 0% 0%, rgba(0,0,0, 0.03) 0%, transparent 40%);
+                radial-gradient(circle at 100% 100%, rgba(0,0,0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(0,0,0, 0.08) 0%, transparent 40%);
             aspect-ratio: 16 / 9; max-width: 100vw; max-height: 100vh; width: auto; height: 100vh;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column;
             transition: background-color 0.5s ease;
@@ -107,7 +138,7 @@
 
         .slide-title {
             color: var(--primary); font-size: 4.6vh; font-weight: 700; margin: 0; text-transform: uppercase;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); letter-spacing: 1px; display: flex; align-items: center; gap: 15px; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); letter-spacing: 1px; display: flex; align-items: center; gap: 15px; 
             transition: color 0.5s ease;
         }
 
@@ -116,21 +147,52 @@
             transition: all 0.5s ease;
         }
 
-        .slide-content { flex: 1; font-size: 4.8vh; color: var(--text-main); display: flex; flex-direction: column; justify-content: center; }
+        .slide-content { flex: 1; font-size: 4.8vh; color: var(--text-main); display: flex; flex-direction: column; justify-content: center; transition: color 0.5s ease; }
 
-        .split-layout { display: flex; flex: 1; gap: 30px; align-items: center; height: 100%; width: 100%;}
-        .split-layout .left-content { flex: 1; display: flex; flex-direction: column; justify-content: center; font-size: 4.4vh; color: var(--text-main); }
-        .split-layout .right-image { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vh;}
+        .split-layout { display: flex; flex: 1; gap: 30px; align-items: center; height: 100%; width: 100%; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+        .split-layout .left-content { flex: 1; display: flex; flex-direction: column; justify-content: center; font-size: 4.4vh; color: var(--text-main); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+        .split-layout .right-image { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vh; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
         
-        .image-caption-container { display: flex; flex-direction: column; align-items: center; width: fit-content; max-width: 100%; max-height: 100%; }
-        .image-caption-container img { width: auto; max-width: 100%; max-height: 50vh; object-fit: contain; border-radius: 10px; border: 3px solid var(--primary-border); box-shadow: 0 8px 20px rgba(0,0,0,0.15); background: #fff; transition: border-color 0.5s ease; }
+        .image-caption-container { display: flex; flex-direction: column; align-items: center; width: fit-content; max-width: 100%; max-height: 100%; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+        .image-caption-container img { width: auto; max-width: 100%; max-height: 50vh; object-fit: contain; border-radius: 10px; border: 3px solid var(--primary-border); box-shadow: 0 8px 20px rgba(0,0,0,0.15); background: var(--bg-card); transition: all 0.5s ease; }
         .dual-image-container .image-caption-container img { max-height: 25vh; }
-        .image-caption { width: 100%; max-width: 100%; text-align: center; font-size: 2.6vh; color: var(--text-muted); margin-top: 1.5vh; font-style: italic; line-height: 1.4; word-wrap: break-word;}
+        .image-caption { width: 100%; max-width: 100%; text-align: center; font-size: 2.6vh; color: var(--text-muted); margin-top: 1.5vh; font-style: italic; line-height: 1.4; word-wrap: break-word; transition: all 0.5s ease;}
+
+        /* TRẠNG THÁI PHÓNG TO ẢNH (3/4 MÀN HÌNH CHUNG) */
+        .split-layout.image-expanded .left-content,
+        .split-layout.image-1-expanded .left-content,
+        .split-layout.image-2-expanded .left-content { flex: 0.35; font-size: 2.8vh; }
+        
+        .split-layout.image-expanded .left-content ul li,
+        .split-layout.image-1-expanded .left-content ul li,
+        .split-layout.image-2-expanded .left-content ul li { margin-bottom: 2vh; padding-left: 4.5vh; }
+        
+        .split-layout.image-expanded .left-content ul li::before,
+        .split-layout.image-1-expanded .left-content ul li::before,
+        .split-layout.image-2-expanded .left-content ul li::before { font-size: 2.8vh; top: 0.2vh; }
+        
+        .split-layout.image-expanded .right-image,
+        .split-layout.image-1-expanded .right-image,
+        .split-layout.image-2-expanded .right-image { flex: 0.65; }
+
+        /* TRẠNG THÁI PHÓNG TO: KHI CHỈ CÓ 1 ẢNH */
+        .split-layout.image-expanded .image-caption-container img { max-height: 70vh; }
+        .split-layout.image-expanded .image-caption { font-size: 2vh; }
+
+        /* TRẠNG THÁI PHÓNG TO: KHI CÓ 2 ẢNH VÀ CHỌN ẢNH 1 */
+        .split-layout.image-1-expanded .image-caption-container:nth-child(1) img { max-height: 70vh; }
+        .split-layout.image-1-expanded .image-caption-container:nth-child(1) .image-caption { font-size: 2vh; }
+        .split-layout.image-1-expanded .image-caption-container:nth-child(2) { display: none; }
+
+        /* TRẠNG THÁI PHÓNG TO: KHI CÓ 2 ẢNH VÀ CHỌN ẢNH 2 */
+        .split-layout.image-2-expanded .image-caption-container:nth-child(2) img { max-height: 70vh; }
+        .split-layout.image-2-expanded .image-caption-container:nth-child(2) .image-caption { font-size: 2vh; }
+        .split-layout.image-2-expanded .image-caption-container:nth-child(1) { display: none; }
 
         ul { list-style-type: none; padding-left: 0; margin: 0; }
-        ul li { position: relative; padding-left: 7vh; margin-bottom: 4vh; line-height: 1.45; opacity: 0; transform: translateX(-30px); transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        ul li { position: relative; padding-left: 7vh; margin-bottom: 4vh; line-height: 1.45; opacity: 0; transform: translateX(-30px); transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), font-size 0.5s ease, padding 0.5s ease, margin 0.5s ease; }
         ul li.visible { opacity: 1; transform: translateX(0); }
-        ul li::before { content: '\f105'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 1.5vh; color: var(--accent); font-size: 4.4vh; top: 0.2vh; transition: transform 0.3s, color 0.5s ease; }
+        ul li::before { content: '\f105'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 1.5vh; color: var(--accent); font-size: 4.4vh; top: 0.2vh; transition: transform 0.3s, color 0.5s ease, font-size 0.5s ease; }
         ul li.visible::before { transform: scale(1.2); }
 
         ul.ref-list li { font-size: 2.6vh; margin-bottom: 3vh; line-height: 1.5; padding-left: 5vh; text-align: justify; }
@@ -143,13 +205,13 @@
         .slide-title-main h1 { color: var(--primary); font-size: 4vh; margin-bottom: 1.5vh; text-transform: uppercase; letter-spacing: 4px; font-weight: normal; opacity: 0.9; transition: color 0.5s ease; }
         .slide-title-main h2 { 
             font-size: 9vh; font-weight: 900; margin-bottom: 6vh; letter-spacing: 2px; text-transform: uppercase;
-            background: linear-gradient(120deg, var(--accent) 30%, #ffffff 50%, var(--accent) 70%);
+            background: linear-gradient(120deg, var(--accent) 30%, var(--text-main) 50%, var(--accent) 70%);
             background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: shineText 3.5s linear infinite; filter: drop-shadow(3px 5px 8px rgba(0,0,0,0.15));
+            animation: shineText 3.5s linear infinite; filter: drop-shadow(3px 5px 8px rgba(0,0,0,0.2));
             transition: all 0.5s ease;
         }
         @keyframes shineText { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-        .slide-title-main .author-info { background: rgba(255, 255, 255, 0.95); padding: 3vh 6vh; border-radius: 12px; border-left: 8px solid var(--primary); border-right: 8px solid var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: left; font-size: 3.5vh; line-height: 1.7; display: inline-block; transition: border-color 0.5s ease; }
+        .slide-title-main .author-info { background: var(--bg-card); color: var(--text-main); padding: 3vh 6vh; border-radius: 12px; border-left: 8px solid var(--primary); border-right: 8px solid var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: left; font-size: 3.5vh; line-height: 1.7; display: inline-block; transition: all 0.5s ease; }
         .author-info i { color: var(--primary); margin-right: 10px; width: 30px; text-align: center; transition: color 0.5s ease; }
 
         /* Slide cảnh báo */
@@ -162,74 +224,38 @@
         .warning-slide ul li { color: var(--accent); font-weight: bold; }
         .warning-slide ul li::before { content: '\f071'; color: var(--accent); font-size: 4.4vh; left: 0.5vh; }
 
-        /* ================== GIAO DIỆN TRẮC NGHIỆM ================== */
-        .quiz-slide { background: linear-gradient(135deg, var(--primary-light) 0%, #ffffff 100%); transition: background 0.5s ease; }
-        .quiz-slide::before { content: '\f059'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; font-size: 50vh; color: rgba(0, 0, 0, 0.02); right: -5vh; bottom: -5vh; z-index: 0; pointer-events: none; transform: rotate(-15deg); }
-        
+        /* Giao Diện Trắc Nghiệm */
+        .quiz-slide { background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-slide) 100%); transition: background 0.5s ease; }
+        .quiz-slide::before { content: '\f059'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; font-size: 50vh; color: rgba(0, 0, 0, 0.03); right: -5vh; bottom: -5vh; z-index: 0; pointer-events: none; transform: rotate(-15deg); }
         .quiz-container { z-index: 1; position: relative; display: flex; flex-direction: column; justify-content: center; height: 100%; align-items: center; }
-        
-        .quiz-card {
-            background: white; width: 90%; border-radius: 20px; padding: 4vh 5vh;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08), 0 5px 15px rgba(0,0,0,0.03);
-            border-top: 6px solid var(--primary); position: relative; transition: border-color 0.5s ease;
-        }
-
-        .quiz-badge {
-            position: absolute; top: -2.5vh; left: 5vh; background: var(--accent); color: white;
-            padding: 0.8vh 2.5vh; border-radius: 20px; font-size: 2.2vh; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            letter-spacing: 1px; text-transform: uppercase; transition: background 0.5s ease;
-        }
-
-        .quiz-question { 
-            font-size: 4.2vh; color: var(--text-main); font-weight: bold; margin-bottom: 4vh; line-height: 1.5; 
-            text-align: justify; padding-left: 2vh; border-left: 5px solid var(--primary-light); transition: border-color 0.5s ease;
-        }
-        
+        .quiz-card { background: var(--bg-card); width: 90%; border-radius: 20px; padding: 4vh 5vh; box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05); border-top: 6px solid var(--primary); position: relative; transition: all 0.5s ease; }
+        .quiz-badge { position: absolute; top: -2.5vh; left: 5vh; background: var(--accent); color: white; padding: 0.8vh 2.5vh; border-radius: 20px; font-size: 2.2vh; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15); letter-spacing: 1px; text-transform: uppercase; transition: background 0.5s ease; }
+        .quiz-question { font-size: 4.2vh; color: var(--primary); font-weight: bold; margin-bottom: 4vh; line-height: 1.5; text-align: justify; padding-left: 2vh; border-left: 5px solid var(--primary-light); transition: border-color 0.5s ease, color 0.5s ease; }
         .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5vh; }
-        
-        .quiz-btn { 
-            display: flex; align-items: center; background: #f8fafc; border: 2px solid transparent; 
-            padding: 1.5vh; border-radius: 15px; font-size: 3.5vh; text-align: left; cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); font-family: 'Times New Roman', Times, serif; 
-            color: var(--text-main); box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
-        
-        .quiz-btn:hover { background: #f1f5f9; border-color: var(--primary-border); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
-        
-        .option-letter {
-            display: inline-flex; justify-content: center; align-items: center; width: 5vh; height: 5vh;
-            background: white; border-radius: 10px; font-weight: bold; color: var(--primary); font-size: 3vh;
-            margin-right: 2vh; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-
+        .quiz-btn { display: flex; align-items: center; background: var(--bg-quiz-btn); border: 2px solid transparent; padding: 1.5vh; border-radius: 15px; font-size: 3.5vh; text-align: left; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); font-family: 'Times New Roman', Times, serif; color: var(--text-main); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .quiz-btn:hover { background: var(--bg-quiz-btn-hover); border-color: var(--primary-border); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
+        .option-letter { display: inline-flex; justify-content: center; align-items: center; width: 5vh; height: 5vh; background: var(--bg-card); border-radius: 10px; font-weight: bold; color: var(--primary); font-size: 3vh; margin-right: 2vh; box-shadow: 0 2px 5px rgba(0,0,0,0.15); flex-shrink: 0; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05); }
         .option-text { flex: 1; line-height: 1.3; }
 
-        /* Trạng thái Nút Trắc nghiệm */
-        .quiz-btn.correct { background: var(--success-light) !important; border-color: var(--success) !important; color: #065f46 !important; transform: scale(1.02); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2); animation: pop 0.4s ease; }
-        .quiz-btn.correct .option-letter { background: var(--success); color: white; }
-        
-        .quiz-btn.wrong { background: var(--danger-light) !important; border-color: var(--danger) !important; color: #991b1b !important; animation: shake 0.4s ease; }
-        .quiz-btn.wrong .option-letter { background: var(--danger); color: white; }
-
-        .quiz-btn.reveal-correct { background: var(--success-light); border: 2px dashed var(--success); opacity: 0.9; }
-        .quiz-btn.reveal-correct .option-letter { background: var(--success); color: white; animation: pulseLetter 1s infinite; }
+        .quiz-btn.correct { background: var(--success-light) !important; border-color: var(--success) !important; color: var(--success) !important; transform: scale(1.02); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2); animation: pop 0.4s ease; }
+        .quiz-btn.correct .option-letter { background: var(--success); color: white; border-color: var(--success); }
+        .quiz-btn.wrong { background: var(--danger-light) !important; border-color: var(--danger) !important; color: var(--danger) !important; animation: shake 0.4s ease; }
+        .quiz-btn.wrong .option-letter { background: var(--danger); color: white; border-color: var(--danger); }
+        .quiz-btn.reveal-correct { background: var(--success-light) !important; border: 2px dashed var(--success) !important; color: var(--success) !important; opacity: 0.9; }
+        .quiz-btn.reveal-correct .option-letter { background: var(--success); color: white; border-color: var(--success); animation: pulseLetter 1s infinite; }
 
         @keyframes pop { 50% { transform: scale(1.04); } }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
         @keyframes pulseLetter { 0% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 0 10px var(--success); } 100% { transform: scale(1); } }
 
-        /* Hộp Feedback */
         .quiz-feedback { margin-top: 3vh; opacity: 0; transition: opacity 0.4s; height: 0; overflow: hidden; }
         .quiz-feedback.show { opacity: 1; height: auto; }
         .alert { padding: 2vh 3vh; border-radius: 12px; font-size: 3.5vh; font-weight: bold; display: flex; align-items: center; gap: 1.5vh; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .alert-success { background: var(--success-light); color: #065f46; border-left: 6px solid var(--success); }
-        .alert-danger { background: var(--danger-light); color: #991b1b; border-left: 6px solid var(--danger); }
-
-        /* ========================================================================= */
+        .alert-success { background: var(--success-light); color: var(--success); border-left: 6px solid var(--success); }
+        .alert-danger { background: var(--danger-light); color: var(--danger); border-left: 6px solid var(--danger); }
 
         /* Màn hình CẢM ƠN */
-        .thank-you-slide { justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, var(--primary-light) 0%, #ffffff 100%); position: relative; overflow: hidden; transition: background 0.5s ease;}
+        .thank-you-slide { justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, var(--primary-light) 0%, var(--bg-slide) 100%); position: relative; overflow: hidden; transition: background 0.5s ease;}
         .thank-you-title { color: var(--primary); font-size: 7vh; margin-bottom: 5vh; text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.15); z-index: 10; position: relative; transition: color 0.5s ease;}
         .sunflower-container { display: flex; gap: 4vw; justify-content: center; z-index: 10; position: relative; }
         .sunflower { font-size: 14vh; animation: bloom 3s ease-in-out infinite alternate; transform-origin: bottom center; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
@@ -243,44 +269,60 @@
         @keyframes popBalloon { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.8); opacity: 0.8; } 100% { transform: scale(2); opacity: 0; } }
 
         /* Footer & Controls */
-        /* Đã nâng Footer lên trên viền đứt 1 xíu (2.5vh so với 1.5vh) */
         .slide-footer { position: absolute; bottom: 2.5vh; left: 5vh; right: 5vh; display: flex; justify-content: space-between; color: var(--primary); font-size: 2.5vh; font-weight: bold; z-index: 10; transition: color 0.5s ease; align-items: center;}
         
-        /* Theme Selector */
         .theme-selector { display: inline-flex; gap: 10px; margin-left: 20px; vertical-align: middle; }
-        .theme-dot { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .theme-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: transform 0.2s; }
         .theme-dot:hover { transform: scale(1.3); }
 
         .progress-bar-container { position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #e5e7eb; z-index: 10; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.4s ease-out, background 0.5s ease; }
         
-        .controls { position: absolute; bottom: 2vh; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 100; }
+        .controls { position: absolute; bottom: 2.5vh; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 100; }
         
-        /* Nút Điều hướng mờ, trong suốt chuẩn Glassmorphism */
+        /* Giảm kích thước 1/2 nút bấm */
         .btn-nav { 
-            background: rgba(255, 255, 255, 0.4); 
+            background: rgba(156, 163, 175, 0.2); 
             color: var(--primary); 
-            border: 1px solid rgba(255,255,255,0.6); 
-            padding: 8px 25px; border-radius: 25px; cursor: pointer; font-size: 18px; font-weight: bold; 
-            font-family: 'Times New Roman', Times, serif; transition: all 0.3s; 
+            border: 1px solid rgba(156, 163, 175, 0.4); 
+            padding: 6px 15px; 
+            border-radius: 20px; font-size: 14px; 
+            font-weight: bold; font-family: 'Times New Roman', Times, serif; transition: all 0.3s; 
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
         }
-        .btn-nav:hover { background: rgba(255, 255, 255, 0.8); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; background: rgba(255, 255, 255, 0.2); }
+        .btn-nav:hover { background: rgba(156, 163, 175, 0.4); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; background: rgba(156, 163, 175, 0.1); }
         
-        .notes-btn { position: absolute; bottom: 2.5vh; right: 3.5vh; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 3px solid white; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.8vh; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.3); z-index: 100; display: none; animation: pulse 2s infinite; }
-        .notes-panel { position: absolute; bottom: 90px; right: 3.5vh; width: 450px; background: rgba(255, 255, 255, 0.95); border-top: 5px solid #f59e0b; padding: 25px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); font-size: 2.5vh; line-height: 1.6; color: #111; z-index: 100; display: none; backdrop-filter: blur(10px); }
-        .fullscreen-btn { position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.2); color: white; border: 1px solid rgba(255,255,255,0.3); width: 45px; height: 45px; border-radius: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 100; transition: all 0.2s; backdrop-filter: blur(5px); }
-        .download-btn { position: absolute; top: 20px; right: 75px; background: rgba(0, 0, 0, 0.2); color: white; border: 1px solid rgba(255,255,255,0.3); width: 45px; height: 45px; border-radius: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 100; transition: all 0.2s; backdrop-filter: blur(5px);}
-        .download-btn:hover, .fullscreen-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.05); }
+        .notes-btn { position: absolute; bottom: 2.5vh; right: 3.5vh; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 3px solid white; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.8vh; box-shadow: 0 6px 15px rgba(0,0,0,0.3); z-index: 100; display: none; animation: pulse 2s infinite; }
+        .notes-panel { position: absolute; bottom: 90px; right: 3.5vh; width: 450px; background: var(--bg-card); color: var(--text-main); border-top: 5px solid #f59e0b; padding: 25px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); font-size: 2.5vh; line-height: 1.6; z-index: 100; display: none; backdrop-filter: blur(10px); transition: all 0.5s ease;}
+        
+        /* Cập nhật Các Nút Công Cụ góc trên (Nhỏ lại, trong suốt) */
+        .fullscreen-btn, .download-btn, .toggle-image-btn { 
+            position: absolute; top: 20px; 
+            background: rgba(156, 163, 175, 0.15); /* Mờ trong suốt */
+            color: var(--text-main); 
+            border: 1px solid rgba(156, 163, 175, 0.25); 
+            width: 36px; height: 36px; /* Kích thước nhỏ gọn */
+            border-radius: 10px; display: flex; justify-content: center; align-items: center; 
+            z-index: 100; transition: all 0.2s; backdrop-filter: blur(5px); 
+        }
+        .fullscreen-btn i, .download-btn i, .toggle-image-btn i { font-size: 15px !important; }
+        .btn-num { font-weight: bold; margin-right: 4px; font-family: sans-serif; font-size: 14px; }
+        
+        .fullscreen-btn { right: 20px; }
+        .download-btn { right: 66px; }
+        .toggle-image-btn-1 { right: 112px; display: none; }
+        .toggle-image-btn-2 { right: 158px; display: none; }
+        
+        .download-btn:hover, .fullscreen-btn:hover, .toggle-image-btn:hover { background: var(--accent); border-color: var(--accent); color: white; transform: scale(1.08); }
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
 
-        /* IN PDF */
+        /* IN PDF / EXPORT ẢNH */
         @media print {
             @page { size: landscape; margin: 0; }
-            body, html { background: white !important; background-image: none !important; height: auto; overflow: visible !important; }
+            body, html { background: white !important; background-image: none !important; height: auto; overflow: visible !important; color: black !important;}
             #presentation-container { display: block; height: auto; }
             .slide-wrapper { box-shadow: none !important; width: 100% !important; height: auto !important; display: block !important; background: white !important; }
             .slide-wrapper::before, .slide-wrapper::after { display: none !important; }
@@ -288,7 +330,7 @@
             ul li, ul li.visible { opacity: 1 !important; transform: none !important; }
             .slide-title-main h2 { -webkit-text-fill-color: var(--accent) !important; background: none !important; }
             .slide-title-main .author-info, .slide-title i, .warning-slide { box-shadow: none !important; border: 2px solid var(--primary-border); }
-            .controls, .notes-btn, .fullscreen-btn, .download-btn, .progress-bar-container, .notes-panel, #balloon-container { display: none !important; }
+            .controls, .notes-btn, .fullscreen-btn, .download-btn, .toggle-image-btn, .progress-bar-container, .notes-panel, #balloon-container, .theme-selector { display: none !important; }
             .slide-footer { display: none !important; }
             
             .quiz-card { border: 2px solid var(--primary-border); box-shadow: none; padding: 2vh; }
@@ -300,7 +342,7 @@
 <body>
 
     <div id="presentation-container">
-        <div class="slide-wrapper">
+        <div class="slide-wrapper" id="capture-area">
             <div class="progress-bar-container"><div class="progress-bar" id="progress"></div></div>
             <div class="inner-frame"></div>
 
@@ -313,6 +355,20 @@
                     <strong><i class="fa-solid fa-chalkboard-user"></i> Giảng viên trình bày:</strong><br>
                     <i class="fa-solid fa-user-doctor"></i> BS. Lê Đàm Vân<br>
                     <i class="fa-solid fa-hospital"></i> Chuyên khoa 2, BV Từ Dũ
+                </div>
+            </div>
+
+            <!-- Tình Huống Lâm Sàng (Slide 2) -->
+            <div class="slide" data-notes="Đây là tình huống có vấn đề thực tế mà các em sẽ gặp rất nhiều ở phòng khám. Thai phụ hoảng loạn, sợ hãi khi cầm kết quả bất thường. Bài toán đặt ra là: Làm sao chẩn đoán được bệnh cho mẹ mà không làm tổn hại đến con? Bài học hôm nay sẽ giúp các em trả lời câu hỏi này.">
+                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-user-injured"></i> Tình huống lâm sàng</h2></div>
+                <div class="split-layout">
+                    <div class="left-content"><ul><li>Thai phụ 28 tuổi, thai 16 tuần.</li><li>Kết quả Pap: HSIL, nguy cơ cao.</li><li>Thai phụ khóc, rất sợ ung thư.</li><li>Lo sợ can thiệp làm sẩy thai.</li><li style="color: var(--accent); font-weight: bold; font-style: italic;">Bác sĩ cần xử trí thế nào?</li></ul></div>
+                    <div class="right-image">
+                        <div class="image-caption-container">
+                            <img src="https://i.ibb.co/Z11TwRcT/edeb9ad47b86.png" alt="Thai phụ lo lắng tại phòng khám">
+                            <div class="image-caption">Thai phụ lo lắng khi nhận kết quả khám bất thường</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -329,19 +385,6 @@
             <div class="slide">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-hands-holding-child"></i> Mục tiêu - Thái độ</h2></div>
                 <div class="slide-content"><ul><li>Trấn an tâm lý thai phụ.</li><li>Thao tác nhẹ nhàng, cẩn thận.</li><li>Tôn trọng người bệnh tuyệt đối.</li><li>Đảm bảo an toàn thai nhi.</li><li>Tuân thủ quy trình vô khuẩn.</li></ul></div>
-            </div>
-
-            <div class="slide" data-notes="Đây là tình huống có vấn đề thực tế mà các em sẽ gặp rất nhiều ở phòng khám. Thai phụ hoảng loạn, sợ hãi khi cầm kết quả bất thường. Bài toán đặt ra là: Làm sao chẩn đoán được bệnh cho mẹ mà không làm tổn hại đến con? Bài học hôm nay sẽ giúp các em trả lời câu hỏi này.">
-                <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-user-injured"></i> Tình huống lâm sàng</h2></div>
-                <div class="split-layout">
-                    <div class="left-content"><ul><li>Thai phụ 28 tuổi, thai 16 tuần.</li><li>Kết quả Pap: HSIL, nguy cơ cao.</li><li>Thai phụ khóc, rất sợ ung thư.</li><li>Lo sợ can thiệp làm sẩy thai.</li><li style="color: var(--accent); font-weight: bold; font-style: italic;">Bác sĩ cần xử trí thế nào?</li></ul></div>
-                    <div class="right-image">
-                        <div class="image-caption-container">
-                            <img src="https://i.ibb.co/Z11TwRcT/edeb9ad47b86.png" alt="Thai phụ lo lắng tại phòng khám">
-                            <div class="image-caption">Thai phụ lo lắng khi nhận kết quả khám bất thường</div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- PHẦN 2: NỘI DUNG -->
@@ -518,7 +561,7 @@
                 </div>
             </div>
 
-            <!-- PHẦN 3: TRẮC NGHIỆM ÔN TẬP (GIAO DIỆN MỚI) -->
+            <!-- PHẦN 3: TRẮC NGHIỆM ÔN TẬP -->
             <div class="slide quiz-slide" data-notes="Mời các em cùng ôn lại bài bằng 10 câu trắc nghiệm nhanh nhé. Ai xung phong trả lời câu đầu tiên?">
                 <div class="slide-header"><h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> Trắc nghiệm Lâm sàng</h2></div>
                 <div class="quiz-container">
@@ -746,15 +789,22 @@
                         <span class="theme-dot" onclick="setTheme('theme-default')" style="background: #006064;" title="Teal - Rose (Mặc định)"></span>
                         <span class="theme-dot" onclick="setTheme('theme-blue')" style="background: #1e3a8a;" title="Blue - Orange"></span>
                         <span class="theme-dot" onclick="setTheme('theme-green')" style="background: #064e3b;" title="Green - Purple"></span>
+                        <span class="theme-dot" onclick="setTheme('theme-dark')" style="background: #111827; border-color: #9ca3af;" title="Dark Mode (Ban đêm)"></span>
                     </div>
                 </span>
-                <span id="footer-page"></span>
+                <span id="footer-right">
+                    <span id="footer-date"></span> &nbsp;|&nbsp; <span id="footer-page"></span>
+                </span>
             </div>
             
             <button id="btn-notes" class="notes-btn" title="Lời giảng"><i class="fa-solid fa-comment-medical"></i></button>
             <div id="panel-notes" class="notes-panel"></div>
-            <button id="btn-download" class="download-btn" title="Tải PDF làm tài liệu"><i class="fa-solid fa-file-pdf" style="font-size: 16px;"></i></button>
-            <button id="btn-fullscreen" class="fullscreen-btn" title="Toàn màn hình"><i class="fa-solid fa-expand" style="font-size: 24px;"></i></button>
+            
+            <!-- Nút Công cụ nổi (Thu nhỏ & Trong suốt) -->
+            <button id="btn-toggle-image-2" class="toggle-image-btn toggle-image-btn-2" title="Phóng to/Thu nhỏ ảnh 2 (Phím 2)"><span class="btn-num">2</span><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button id="btn-toggle-image-1" class="toggle-image-btn toggle-image-btn-1" title="Phóng to/Thu nhỏ ảnh 1 (Phím 1)"><span class="btn-num" id="span-num-1">1</span><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button id="btn-download" class="download-btn" title="Tải Slide thành Ảnh (Image)"><i class="fa-solid fa-image"></i></button>
+            <button id="btn-fullscreen" class="fullscreen-btn" title="Toàn màn hình"><i class="fa-solid fa-expand"></i></button>
 
         </div>
 
@@ -765,6 +815,14 @@
     </div>
 
     <script>
+        // Cài đặt ngày tháng năm động
+        function setFooterDate() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('footer-date').innerText = dateStr;
+        }
+        setFooterDate();
+
         const slides = document.querySelectorAll('.slide');
         const progressBar = document.getElementById('progress');
         const pageText = document.getElementById('footer-page');
@@ -774,6 +832,13 @@
         const panelNotes = document.getElementById('panel-notes');
         const btnFullscreen = document.getElementById('btn-fullscreen');
         const btnDownload = document.getElementById('btn-download');
+        
+        // Các nút Phóng to ảnh
+        const btnToggleImg1 = document.getElementById('btn-toggle-image-1');
+        const btnToggleImg2 = document.getElementById('btn-toggle-image-2');
+        const iconToggleImg1 = btnToggleImg1.querySelector('i');
+        const iconToggleImg2 = btnToggleImg2.querySelector('i');
+        const numToggleImg1 = document.getElementById('span-num-1');
         const iconFullscreen = btnFullscreen.querySelector('i');
         
         let currentSlide = 0;
@@ -786,10 +851,39 @@
         }
 
         function updateSlide(isMovingForward = true) {
-            slides.forEach(slide => slide.classList.remove('active'));
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+                // Reset hiệu ứng phóng to ảnh khi chuyển slide
+                const splitLayout = slide.querySelector('.split-layout');
+                if(splitLayout) {
+                    splitLayout.classList.remove('image-expanded', 'image-1-expanded', 'image-2-expanded');
+                }
+            });
+            
+            iconToggleImg1.className = 'fa-solid fa-magnifying-glass-plus';
+            iconToggleImg2.className = 'fa-solid fa-magnifying-glass-plus';
+
             const activeSlide = slides[currentSlide];
             activeSlide.classList.add('active');
             
+            // Xử lý ẩn/hiện nút Phóng to ảnh (hỗ trợ 1 ảnh và 2 ảnh)
+            const splitLayout = activeSlide.querySelector('.split-layout');
+            const imageContainers = activeSlide.querySelectorAll('.image-caption-container');
+            
+            if (splitLayout && imageContainers.length > 0) {
+                btnToggleImg1.style.display = 'flex';
+                if (imageContainers.length > 1) {
+                    btnToggleImg2.style.display = 'flex';
+                    numToggleImg1.style.display = 'inline'; // Hiện số 1
+                } else {
+                    btnToggleImg2.style.display = 'none';
+                    numToggleImg1.style.display = 'none'; // Ẩn số 1, chỉ để icon kính lúp
+                }
+            } else {
+                btnToggleImg1.style.display = 'none';
+                btnToggleImg2.style.display = 'none';
+            }
+
             const listItems = activeSlide.querySelectorAll('ul li');
             if (isMovingForward) {
                 listItems.forEach(li => li.classList.remove('visible'));
@@ -854,15 +948,50 @@
             }
         }
 
+        // --- BỔ SUNG ÂM THANH MARIO BẰNG WEB AUDIO API ---
+        function playMarioSound(isCorrect) {
+            try {
+                // Khởi tạo AudioContext (sẽ tự kích hoạt khi có User Gesture như thao tác click)
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                
+                osc.connect(gainNode);
+                gainNode.connect(ctx.destination);
+
+                if (isCorrect) {
+                    // Âm thanh Mario Coin (Đúng)
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(987.77, ctx.currentTime); // Nốt B5
+                    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.1); // Nốt E6
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.4);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.5);
+                } else {
+                    // Âm thanh Mario Bump/Die (Sai)
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, ctx.currentTime); // Tần số trầm
+                    gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.2); // Tụt nhanh
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.2);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch (e) {
+                console.log("Audio not supported or blocked by browser", e);
+            }
+        }
+
         window.checkAnswer = function(btn, isCorrect, letter) {
             const container = btn.closest('.quiz-container');
             const feedback = container.querySelector('.quiz-feedback');
             const allBtns = container.querySelectorAll('.quiz-btn');
 
             allBtns.forEach(b => {
-                b.style.pointerEvents = 'none'; // Khóa nút
-                
-                // Nếu chọn sai, tự động đánh dấu làm nổi bật câu đúng (Nét đứt, biểu tượng Check)
+                b.style.pointerEvents = 'none'; 
                 if(b.getAttribute('onclick').includes('true') && !isCorrect) {
                     b.classList.add('reveal-correct');
                     const correctLetterSpan = b.querySelector('.option-letter');
@@ -873,17 +1002,59 @@
             const letterSpan = btn.querySelector('.option-letter');
 
             if(isCorrect) {
+                playMarioSound(true); // Gọi âm thanh đúng
                 btn.classList.add('correct');
                 if(letterSpan) letterSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
                 feedback.innerHTML = '<div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> Chính xác! Tuyệt vời!</div>';
                 feedback.classList.add('show');
             } else {
+                playMarioSound(false); // Gọi âm thanh sai
                 btn.classList.add('wrong');
                 if(letterSpan) letterSpan.innerHTML = '<i class="fa-solid fa-xmark"></i>';
                 feedback.innerHTML = '<div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> Sai rồi, đáp án đúng đã được đánh dấu màu xanh!</div>';
                 feedback.classList.add('show');
             }
         }
+
+        // Logic Mở Rộng Ảnh 1 (hoặc ảnh duy nhất)
+        btnToggleImg1.onclick = () => {
+            const activeSlide = slides[currentSlide];
+            const splitLayout = activeSlide.querySelector('.split-layout');
+            const numImages = activeSlide.querySelectorAll('.image-caption-container').length;
+            if (!splitLayout) return;
+            
+            if (numImages === 1) {
+                splitLayout.classList.toggle('image-expanded');
+                iconToggleImg1.className = splitLayout.classList.contains('image-expanded') ? 'fa-solid fa-magnifying-glass-minus' : 'fa-solid fa-magnifying-glass-plus';
+            } else {
+                if (splitLayout.classList.contains('image-1-expanded')) {
+                    splitLayout.classList.remove('image-1-expanded');
+                    iconToggleImg1.className = 'fa-solid fa-magnifying-glass-plus';
+                } else {
+                    splitLayout.classList.remove('image-2-expanded');
+                    splitLayout.classList.add('image-1-expanded');
+                    iconToggleImg1.className = 'fa-solid fa-magnifying-glass-minus';
+                    iconToggleImg2.className = 'fa-solid fa-magnifying-glass-plus';
+                }
+            }
+        };
+
+        // Logic Mở Rộng Ảnh 2
+        btnToggleImg2.onclick = () => {
+            const activeSlide = slides[currentSlide];
+            const splitLayout = activeSlide.querySelector('.split-layout');
+            if (!splitLayout) return;
+            
+            if (splitLayout.classList.contains('image-2-expanded')) {
+                splitLayout.classList.remove('image-2-expanded');
+                iconToggleImg2.className = 'fa-solid fa-magnifying-glass-plus';
+            } else {
+                splitLayout.classList.remove('image-1-expanded');
+                splitLayout.classList.add('image-2-expanded');
+                iconToggleImg2.className = 'fa-solid fa-magnifying-glass-minus';
+                iconToggleImg1.className = 'fa-solid fa-magnifying-glass-plus';
+            }
+        };
 
         function nextAction() {
             const activeSlide = slides[currentSlide];
@@ -921,6 +1092,7 @@
         btnPrev.addEventListener('click', prevAction);
 
         document.getElementById('presentation-container').addEventListener('click', (e) => {
+            // Ngăn chặn chuyển slide khi bấm vào các nút điều khiển
             if (e.target.closest('button') || e.target.closest('.controls') || e.target.closest('.notes-panel') || e.target.closest('.quiz-btn') || e.target.closest('.theme-dot')) return;
             nextAction();
         });
@@ -935,6 +1107,12 @@
                 nextAction();
             } else if (e.key === 'ArrowLeft') {
                 prevAction();
+            } else if (e.key === '1') {
+                // Phím tắt phóng to ảnh 1
+                if (btnToggleImg1.style.display !== 'none') btnToggleImg1.click();
+            } else if (e.key === '2') {
+                // Phím tắt phóng to ảnh 2
+                if (btnToggleImg2.style.display !== 'none') btnToggleImg2.click();
             }
         });
 
@@ -956,11 +1134,51 @@
             }
         });
 
+        // Xử lý nút Tải Ảnh Slide
         btnDownload.addEventListener('click', () => {
-            window.print();
+            const controls = document.querySelector('.controls');
+            const floatingBtns = document.querySelectorAll('.fullscreen-btn, .download-btn, .notes-btn, .toggle-image-btn');
+            const themeSel = document.querySelector('.theme-selector');
+            const slideWrapper = document.querySelector('.slide-wrapper');
+            
+            controls.style.display = 'none';
+            themeSel.style.display = 'none';
+            floatingBtns.forEach(btn => btn.style.display = 'none');
+
+            html2canvas(slideWrapper, {
+                scale: 4, 
+                useCORS: true,
+                logging: false,
+                allowTaint: true,
+                backgroundColor: window.getComputedStyle(slideWrapper).backgroundColor
+            }).then(canvas => {
+                controls.style.display = 'flex';
+                themeSel.style.display = 'inline-flex';
+                floatingBtns.forEach(btn => {
+                    // Trả lại trạng thái display riêng biệt của nút zoom (nếu ở slide ko có ảnh thì không được hiện)
+                    if (btn.classList.contains('toggle-image-btn-1') && slideWrapper.querySelector('.split-layout') && slideWrapper.querySelectorAll('.image-caption-container').length > 0) {
+                        btn.style.display = 'flex';
+                    } else if (btn.classList.contains('toggle-image-btn-2') && slideWrapper.querySelectorAll('.image-caption-container').length > 1) {
+                        btn.style.display = 'flex';
+                    } else if (!btn.classList.contains('toggle-image-btn')) {
+                        btn.style.display = 'flex';
+                    }
+                });
+
+                const link = document.createElement('a');
+                link.download = `BaiGiang_SoiCTC_Slide_${currentSlide + 1}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0); 
+                link.click();
+            }).catch(err => {
+                console.error("Lỗi khi chụp ảnh slide: ", err);
+                controls.style.display = 'flex';
+                themeSel.style.display = 'inline-flex';
+                alert("Rất tiếc, không thể tải ảnh slide lúc này.");
+            });
         });
 
         updateSlide();
     </script>
 </body>
 </html>
+```
